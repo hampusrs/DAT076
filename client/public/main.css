@@ -1,0 +1,36 @@
+.button.play {
+    width: 74px;
+    height: 74px; 
+    border-style: solid;
+    border-width: 37px;
+    border-color: #202020;
+    border-width: 37px 0px 37px 74px;
+    border-color: transparent transparent transparent #202020;
+    box-sizing: border-box;
+    
+}
+
+.button.endgame {
+    margin: 10px;
+    border-radius: 10px;
+    border-color: black;
+    background-color: red;
+    
+}
+
+#songCoverImg {
+    width:  150px;
+    margin: 28px;
+    position: relative;
+    left: 30%;
+    border: 2px solid black;
+    overflow: hidden;
+}
+
+#songInfo {
+    margin: 5px;
+    position: relative;
+    float: right;
+    background-color: aquamarine;
+
+}
