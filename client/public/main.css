@@ -1,10 +1,12 @@
 .button.play {
-    width: 74px;
-    height: 74px; 
+    position: relative;
+    top: 37.8px;
+    left: 350px;
+    
     border-style: solid;
     border-width: 37px;
     border-color: #202020;
-    border-width: 37px 0px 37px 74px;
+    border-width: 10px 0px 10px 20px;
     border-color: transparent transparent transparent #202020;
     box-sizing: border-box;
     
@@ -20,6 +22,7 @@
 
 #songCoverImg {
     width:  150px;
+    align-content: center;
     margin: 28px;
     position: relative;
     left: 30%;
@@ -30,7 +33,18 @@
 #songInfo {
     margin: 5px;
     position: relative;
+    right: 150px;
+    top: 40px;
     float: right;
-    background-color: aquamarine;
+}
 
+#guessForm {
+    position: relative;
+    text-align: center;
+    top: 25px;
+}
+
+#guess {
+    border-radius: 25px;
+    border-color: #202020;
 }
