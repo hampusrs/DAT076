@@ -15,7 +15,7 @@
 #buttonPause {
     position: relative;
     width: 10px;
-    height: 15px;
+    height: 20px;
     border-style: solid;
     border-width: 20px;
     border-color: #202020;
@@ -24,26 +24,26 @@
     border-color: #202020;
 }
 
-.buttonMusic {
+.buttonsMusic {
+    position: relative;
     top: 20vh;
-    left: 45vw;
+    /* left: 50%; */
+    text-align: center;
 }
 
 .button.endgame {
-    margin: 10px;
-    border-radius: 10px;
+    height: 40px;
+    width: 112px;
+    margin: 30px;
+    border-radius: 20px;
     border-color: black;
     background-color: red;
     
 }
 
-.song {
-left: 30vw;
-    top: 10vh;
-}
-
 #songCoverImg {
     width:  200px;
+    /* transform-origin: bottom right; */
     margin-right: 4vw;
     align-content: center;
     position: relative;
@@ -56,14 +56,17 @@ left: 30vw;
     position: relative;
     float: right;
     margin-top: 6vh;
+    transform-origin: bottom left;
     /* right: 10vw;
     top: 10vh; */
 }
 
 #songSection {
+    position: relative;
     display: flex;
-    left: 30vw;
-    top: 10vh;
+    left: 26%;
+    /* left: 30vw;
+    top: 10vh; */
 }
 
 #guessForm {
