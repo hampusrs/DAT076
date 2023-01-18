@@ -1,7 +1,7 @@
-.button.play {
+#buttonPlay {
     position: relative;
-    top: 37.8px;
-    left: 350px;
+    /* top: 20vh;
+    left: 49vw; */
     
     border-style: solid;
     border-width: 37px;
@@ -12,6 +12,23 @@
     
 }
 
+#buttonPause {
+    position: relative;
+    width: 10px;
+    height: 15px;
+    border-style: solid;
+    border-width: 20px;
+    border-color: #202020;
+    border-style: double;
+    border-width: 0 0 0 37px;
+    border-color: #202020;
+}
+
+.buttonMusic {
+    top: 20vh;
+    left: 45vw;
+}
+
 .button.endgame {
     margin: 10px;
     border-radius: 10px;
@@ -20,31 +37,43 @@
     
 }
 
+.song {
+left: 30vw;
+    top: 10vh;
+}
+
 #songCoverImg {
-    width:  150px;
+    width:  200px;
+    margin-right: 4vw;
     align-content: center;
-    margin: 28px;
     position: relative;
-    left: 30%;
     border: 2px solid black;
     overflow: hidden;
 }
 
+
 #songInfo {
-    margin: 5px;
     position: relative;
-    right: 150px;
-    top: 40px;
     float: right;
+    margin-top: 6vh;
+    /* right: 10vw;
+    top: 10vh; */
+}
+
+#songSection {
+    display: flex;
+    left: 30vw;
+    top: 10vh;
 }
 
 #guessForm {
     position: relative;
     text-align: center;
-    top: 25px;
+    top: 18vh;
 }
 
 #guess {
     border-radius: 25px;
     border-color: #202020;
 }
+
