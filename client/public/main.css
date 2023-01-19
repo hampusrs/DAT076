@@ -1,10 +1,7 @@
 #buttonPlay {
     position: relative;
-    /* top: 20vh;
-    left: 49vw; */
     
     border-style: solid;
-    border-width: 37px;
     border-color: #202020;
     border-width: 10px 0px 10px 20px;
     border-color: transparent transparent transparent #202020;
@@ -31,12 +28,12 @@
     text-align: center;
 }
 
-.button.endgame {
+#buttonEndgame {
     height: 40px;
     width: 112px;
     margin: 30px;
     border-radius: 20px;
-    border-color: black;
+    border-color: #202020;
     background-color: red;
     
 }
@@ -47,7 +44,7 @@
     margin-right: 4vw;
     align-content: center;
     position: relative;
-    border: 2px solid black;
+    border: 2px solid #202020;
     overflow: hidden;
 }
 
