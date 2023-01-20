@@ -6,15 +6,20 @@ button {
     margin-left: auto; /* Push this element to the right */
 }
 
+.space {
+    width: 100px;
+    height: 50px
+}
+
 #main {
     border: 1px dotted black;
     display: flex;
     align-items: center; /* Vertical align the elements to the center */
 }
 
-#end_session {
+#end-session {
     float: left;
-    background-color: #4CAF50;
+    background-color: #F65B5B;
     border-radius: 12px;
     border: none;
     color: black;
@@ -25,7 +30,7 @@ button {
     font-size: 16px;
 }
 
-#start_game {
+#start-game {
     background-color: #4CAF50;
     border-radius: 12px;
     border: none;
@@ -41,9 +46,9 @@ button {
     height:500px;
     width:540px;
     overflow:auto;
+    background-color:#F5E4E4;
     border:8px solid #F5E4E4;
     padding:2%;
-    background-color:#F5E4E4"
 }
 
 .player-card {
