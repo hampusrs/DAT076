@@ -13,6 +13,7 @@ button {
 }
 
 #end_session {
+    float: left;
     background-color: #4CAF50;
     border-radius: 12px;
     border: none;
