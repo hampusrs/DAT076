@@ -1,0 +1,32 @@
+
+#background {
+    height: 100vh;
+    background: linear-gradient(240deg, rgba(2,0,36,1) 50%, rgba(29,185,84,1) 50%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.host-btn {
+    background:none; 
+    border:none; 
+    font-size: 7vw;
+    color: white;
+    margin-right: 15vw;
+}
+
+.host-btn:hover {
+    font-size: 8vw;
+}
+
+.join-game-btn {
+    background: none; 
+    border: none; 
+    font-size: 7vw;
+    color: white;
+    margin-left: 7vw;
+}
+
+.join-game-btn:hover {
+    font-size: 8vw;
+}
