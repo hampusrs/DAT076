@@ -35,3 +35,12 @@ button {
     display: inline-block;
     font-size: 16px;
 }
+
+#player-list {
+    height:500px;
+    width:540px;
+    overflow:auto;
+    border:8px solid #F5E4E4;
+    padding:2%;
+    background-color:#F5E4E4"
+}
