@@ -1,10 +1,3 @@
-#main {
-    border: 1px dotted black;
-    display: flex;
-    align-items: center; /* Vertical align the elements to the center */
-}
-
-
 h1 {
     margin: 0;
 }
@@ -13,6 +6,20 @@ button {
     margin-left: auto; /* Push this element to the right */
 }
 
+#main {
+    border: 1px dotted black;
+    display: flex;
+    align-items: center; /* Vertical align the elements to the center */
+}
+
 #end_session {
-    background-color: #4CAF50;border-radius: 12px;border: none;color: white;padding: 15px 32px;text-align: center;text-decoration: none;display: inline-block;font-size: 16px;
+    background-color: #4CAF50;
+    border-radius: 12px;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
 }
