@@ -13,6 +13,8 @@
     font-size: 7vw;
     color: white;
     margin-right: 15vw;
+    transition-property: font-size;
+    transition-duration: 2s;
 }
 
 .host-btn:hover {
@@ -25,6 +27,7 @@
     font-size: 7vw;
     color: white;
     margin-left: 7vw;
+    transition-duration: 2s;
 }
 
 .join-game-btn:hover {
