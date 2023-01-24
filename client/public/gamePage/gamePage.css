@@ -2,10 +2,20 @@
     position: relative;
     border-style: solid;
     border-color: #202020;
-    border-width: 10px 0px 10px 20px;
+    border-width: 1vw 0px 1vw 2vw;
     border-color: transparent transparent transparent #202020;
     box-sizing: border-box;
     
+}
+
+html {
+    margin: 0;
+    min-height: 100vh;
+    overflow: hidden;
+}
+body {
+    margin: 0;
+    min-height: 100vh;
 }
 
 #buttonPause {
@@ -22,7 +32,7 @@
 
 .buttonsMusic {
     position: relative;
-    top: 20vh;
+    top: 14vh;  
     text-align: center;
 }
 
@@ -33,26 +43,37 @@
     border-radius: 20px;
     border-color: #202020;
     background-color: red;
-    
 }
 
 #songCoverImg {
-    width:  200px;
+    width:  20vw;
     margin-right: 4vw;
     align-content: center;
     position: relative;
     border: 2px solid #202020;
 }
 
+#songName {
+    font-size: 4vw;
+}
+
+#artist {
+    font-size: 3vw;
+}
+
+#album {
+    font-size: 2vw;
+}
 
 #songInfo {
     position: relative;
     float: right;
-    margin-top: 6vh;
+    margin-top: 6v;
 }
 
 #songSection {
     position: relative;
+    width: fit-content;
     display: flex;
     left: 26%;
 }
@@ -60,7 +81,8 @@
 #guessForm {
     position: relative;
     text-align: center;
-    top: 18vh;
+    font-size: 2.5vw;
+    top: 12vh;
 }
 
 #guess {
