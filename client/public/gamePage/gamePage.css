@@ -69,6 +69,7 @@ body {
     position: relative;
     float: right;
     margin-top: 6v;
+    list-style-type: none;
 }
 
 #songSection {
