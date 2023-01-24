@@ -15,7 +15,10 @@
     margin-right: 15vw;
     transition-property: font-size;
     transition-duration: 2s;
+    text-decoration: none;
 }
+
+
 
 .host-btn:hover {
     font-size: 8vw;
