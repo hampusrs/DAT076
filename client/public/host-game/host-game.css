@@ -1,0 +1,48 @@
+button {
+    border-radius: 500px!important;
+    border: none;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.space {
+    height: 50px
+}
+
+#game-code {
+    font-size: 54px;
+}
+
+#end-session {
+    width:200px;
+    height:60px;
+    font-size: 24px;
+    background-color: #F65B5B;
+}
+
+#start-game {
+    width:430px;
+    height:100px;
+    font-size: 32px;
+    background-color: #4CAF50;
+}
+
+#player-list {
+    height:400px;
+    width:540px;
+    overflow:auto;
+    background-color:#F5E4E4;
+    border:8px solid #F5E4E4;
+    padding:2%;
+}
+
+.player-card {
+    width:430px;
+    height:60px;
+    background-color: #E9AAAA;
+    border-radius: 30px;
+    text-align: center;
+    margin-bottom: 10px;
+}

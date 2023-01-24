@@ -1,0 +1,36 @@
+#title {
+    margin-top: 220px;
+}
+
+#gamecode-input {
+    width:200px;
+    height:60px;
+    margin-top: 25px;
+    border-radius: 500px;
+    text-align: center;
+}
+
+button {
+    border-radius: 500px!important;
+    border: none;
+    color: black;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+}
+
+#go-back-button {
+    width:150px;
+    height:40px;
+    margin: 5px;
+    font-size: 20px;
+    background-color: #F65B5B;
+}
+
+#join-button {
+    width:130px;
+    height:50px;
+    margin-top: 30px;
+    font-size: 24px;
+    background-color: #4CAF50;
+}
