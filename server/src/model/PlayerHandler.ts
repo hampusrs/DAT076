@@ -4,7 +4,7 @@ export class PlayerHandler {
     host : Player;
 
 
-    constructor(players : Array<Player>, host :_ Player) {
+    constructor(players : Array<Player>, host : Player) {
         this.players = players;
         this.host = host; 
     }
