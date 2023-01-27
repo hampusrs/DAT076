@@ -1,3 +1,5 @@
+import { Player } from "./Player";
+
 export class PlayerHandler {
 
     players : Array<Player>;
