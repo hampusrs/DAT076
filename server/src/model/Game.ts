@@ -1,21 +1,19 @@
-import { Player } from "./Player";
-import { Song } from "./Song";
+import { Player } from "../model/Player";
+import { Song } from "../model/Song";
 
 export class Game {
-
-    currentSong : Song;
-    currentPlayer : Player; 
+    gameID: number;
+    currentSong: Song | undefined;
+    currentPlayer: Player | undefined;
     players : Array<Player>;
-    songs : Array<Song>;   //Antar att vi vill ha en lista med songs nu under assignment 2?
-    
+    songs : Array<Song>;
 
-    constructor(currentSong : Song, currentPlayer : Player, players : Array<Player>, songs : Array<Song>) {
-        this.currentSong = currentSong;
-        this.currentPlayer = currentPlayer; 
+    constructor(gameID: number, players : Array<Player>, songs : Array<Song>) {
         this.players = players;
         this.songs = songs;
+        this.gameID = gameID;
     }
-
+    /*
     printSong() : void {
         console.log(this.currentSong);
     }
@@ -32,5 +30,6 @@ export class Game {
     getNextSongIndex() : number {
         return (this.songs.indexOf(this.currentSong) + 1); 
     }
+    */
 
 }

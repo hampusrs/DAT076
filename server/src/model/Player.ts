@@ -1,12 +1,6 @@
-import { Song } from "./Song";
+import { Song } from "../model/Song";
 
-export class Player {
+export interface Player {
     name : string;
     topSongs : Array<Song>;
-
-    constructor(name : string, topSongs : Array<Song>) {
-        this.name = name;
-        this.topSongs = topSongs;
-    }
-
 }
