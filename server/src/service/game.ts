@@ -1,13 +1,26 @@
-import { Game } from "../model/Game";
-import { Song } from "../model/Song";
-import { Player } from "../model/Player"
+import {Game} from "../model/Game";
+import {Song} from "../model/Song";
+import {Player} from "../model/Player"
 
-const allSongs : Song[] = [];
+const games: Game[] = [];
 
-export function getSongs() {
-    return allSongs;
+export function startNewGame(gameID: number, players: Player[], songs: Song[]) {
+    const newGame = new Game(gameID, players, songs);
+    games.push(newGame);
+    return newGame;
 }
 
-export function printSong() {
-    
+export function addPlayer(gameID: number, name: string, topSongs: Song[]) {
+    const game: Game | undefined = games.find((game: Game) => {
+        return game.gameID === gameID;
+    });
+
+    if (game == null) {
+        return false;
+    }
+
+    let player: Player = {name: name, topSongs: topSongs};
+
+    game.players.push(player);
+    return true;
 }
