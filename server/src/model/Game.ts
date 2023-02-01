@@ -5,10 +5,10 @@ export class Game {
     gameID: number;
     currentSong: Song | undefined;
     currentPlayer: Player | undefined;
-    players : Array<Player>;
-    songs : Array<Song>;
+    players : Player[];
+    songs : Song[];
 
-    constructor(gameID: number, players : Array<Player>, songs : Array<Song>) {
+    constructor(gameID: number, players : Player[], songs : Song[]) {
         this.players = players;
         this.songs = songs;
         this.gameID = gameID;
