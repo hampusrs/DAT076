@@ -38,7 +38,7 @@ export function getGame(gameID : number) {
         return false;
     }
 
-    return game
+    return game;
 }
 
 
