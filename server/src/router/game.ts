@@ -24,13 +24,13 @@ gameRouter.get("/game/:gameID", (req, res) => {
     res.status(200).send(getGame(gameID));
 })
 
-gameRouter.post("/game/{gameID}/players", (req, res) => {
-    const gameID = req.body.gameID;
+gameRouter.post("/game/:gameID/players", (req, res) => {
+    const gameID : number = parseInt(req.params.gameID, 10);
     const name = req.body.name;
     const topSongs = req.body.topSongs;
 
-
     addPlayer(gameID, name, topSongs);
-    res.status(200).send(addPlayer);
+
+    res.status(200).send(getGame(gameID));
 })
 
