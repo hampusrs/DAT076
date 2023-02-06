@@ -1,7 +1,25 @@
 import {Game} from "../model/Game";
 import {Song} from "../model/Song";
-import {Player} from "../model/Player"
+import {Player} from "../model/Player";
 
+
+const song1: Song = {id : 1, title : 'Firework', album : 'Teenage Dream', artist : 'Katy Perry'};
+const song2: Song = {id : 2, title : 'Baby', album : 'My Worlds', artist : 'Justin Bieber'};
+const song3: Song = {id : 2, title : 'Levels', album : 'True', artist : 'Avicii'};
+let currentSong : Song | undefined;
+
+const player1 : Player = {name : "Bob", topSongs : [song1,song2]}
+const player2 : Player = {name : "Jane", topSongs : [song2,song3]}
+const players : Player[] = [player1, player2]
+
+/*
+export interface IGameService {
+
+}
+
+export class GameService implements IGameService {
+
+}
 const games: Array<Game> = [];
 
 export function startNewGame(gameID: number, players: Player[], songs: Song[]) {
@@ -46,4 +64,4 @@ export function addGame(gameID: number, players : Player[], songs : Song[]) : Ga
     const newGame = new Game(gameID, players, songs);
     games.push(newGame);
     return newGame;
-}
+}*/
