@@ -1,4 +1,3 @@
-import { Game } from "../model/Game";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 
@@ -6,15 +5,20 @@ const song1: Song = {
   id: 1,
   title: "Firework",
   album: "Teenage Dream",
-  artist: "Katy Perry",
+  artist: "Katy Perry"
 };
 const song2: Song = {
   id: 2,
   title: "Baby",
   album: "My Worlds",
-  artist: "Justin Bieber",
+  artist: "Justin Bieber"
 };
-const song3: Song = { id: 2, title: "Levels", album: "True", artist: "Avicii" };
+const song3: Song = {
+  id: 3,
+  title: "Levels",
+  album: "True",
+  artist: "Avicii"
+};
 let currentSong: Song | undefined;
 
 const player1: Player = { name: "Bob", topSongs: [song1, song2] };
