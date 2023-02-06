@@ -21,7 +21,9 @@ const player1: Player = { name: "Bob", topSongs: [song1, song2] };
 const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 const players: Player[] = [player1, player2];
 
-export function startGame() {
+export const gameID : number = 123;
+
+export async function startGame() : Promise<[Song, Player[]]> {
   if (currentSong == null) {
     //find a song;
     //find all players with that song;
@@ -31,7 +33,7 @@ export function startGame() {
   }
 }
 
-export function nextSong() {
+export async function nextSong() : Promise<[Song, Player[]]> {
   if (currentSong == null) {
     throw new Error(`Game has not started yet`);
   } else {
@@ -42,56 +44,3 @@ export function nextSong() {
   }
 }
 
-/*
-export interface IGameService {
-
-}
-
-export class GameService implements IGameService {
-
-}
-const games: Array<Game> = [];
-
-export function startNewGame(gameID: number, players: Player[], songs: Song[]) {
-    const newGame = new Game(gameID, players, songs);
-    games.push(newGame);
-    return newGame;
-}
-
-export function addPlayer(gameID: number, name: string, topSongs: Song[]) {
-    const game: Game | undefined = games.find((game: Game) => {
-        return game.gameID === gameID;
-    });
-
-    if (game == null) {
-        return false;
-    }
-
-    let player: Player = {name: name, topSongs: topSongs};
-
-    game.players.push(player);
-    return true;
-}
-
-export function getGames() : Game[] {
-    return games;
-}
-
-export function getGame(gameID : number) {
-    const game: Game | undefined = games.find((game: Game) => {
-        return game.gameID === gameID;
-    });
-
-    if (game == null) {
-        return false;
-    }
-
-    return game;
-}
-
-
-export function addGame(gameID: number, players : Player[], songs : Song[]) : Game {
-    const newGame = new Game(gameID, players, songs);
-    games.push(newGame);
-    return newGame;
-}*/
