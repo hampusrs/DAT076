@@ -25,32 +25,48 @@ const player1: Player = { name: "Bob", topSongs: [song1, song2] };
 const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 const players: Player[] = [player1, player2];
 
-export const gameID: number = 123;
+const gameID: number = 123;
 
-export async function getGame(): Promise<Player[]> {
-  return players;
+
+interface IGameService {
+    getGame() : Promise<Player[]>;
+    startGame() : Promise<[Song, Player[]]>;
+    nextSong() : Promise<[Song, Player[]]>;
 }
 
-export async function startGame(): Promise<[Song, Player[]]> {
-  if (currentSong == null) {
-    //find a song;
-    //find all players with that song
-    // set currentSong to the new song
-    currentSong = song1;
-    return [currentSong, [player1]]; // <- change this later
-  } else {
-    throw new Error(`Game has already started`);
+class GameService implements IGameService {
+
+  async getGame(): Promise<Player[]> {
+    return players;
   }
+
+  async startGame(): Promise<[Song, Player[]]> {
+    if (currentSong == null) {
+      //find a song;
+      //find all players with that song
+      // set currentSong to the new song
+      currentSong = song1;
+      return [currentSong, [player1]]; // <- change this later
+    } else {
+      throw new Error(`Game has already started`);
+    }
+  }
+
+  async nextSong(): Promise<[Song, Player[]]> {
+    if (currentSong == null) {
+      throw new Error(`Game has not started yet`);
+    } else {
+      // find new song
+      // find players who have that song
+      // return song and the list of players
+      currentSong = song2;
+      return [currentSong, [player1, player2]]; // <- change this later
+    }
+
+  }
+
 }
 
-export async function nextSong(): Promise<[Song, Player[]]> {
-  if (currentSong == null) {
-    throw new Error(`Game has not started yet`);
-  } else {
-    // find new song
-    // find players who have that song
-    // return song and the list of players
-    currentSong = song2;
-    return [currentSong, [player1, player2]]; // <- change this later
-  }
+export function makeGameService() {
+  return new GameService();
 }
