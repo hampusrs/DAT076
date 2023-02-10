@@ -29,8 +29,8 @@ const gameID: number = 123;
 
 interface IGameService {
   getGame(): Promise<Player[]>;
-  startGame(): Promise<[Song, Player[]] | undefined>; // returns undefined is game is already started.
-  nextSong(): Promise<[Song, Player[]]>;
+  startGame(): Promise<{currentSong : Song, players : Player[]} | undefined>; // returns undefined is game is already started.
+  nextSong(): Promise<{currentSong : Song, players : Player[]}>;
 }
 
 class GameService implements IGameService {
@@ -38,7 +38,7 @@ class GameService implements IGameService {
     return players;
   }
 
-  async startGame(): Promise<[Song, Player[]] | undefined> {
+  async startGame(): Promise<{currentSong :Song, players : Player[]} | undefined> {
     if (currentSong == null) {
       return this.randomizeNewCurrentSong();
     } else {
@@ -46,7 +46,7 @@ class GameService implements IGameService {
     }
   }
 
-  async nextSong(): Promise<[Song, Player[]]> {
+  async nextSong(): Promise<{currentSong : Song, players : Player[]}> {
     if (currentSong == null) {
       throw new Error(`Game has not started yet`);
     } else {
@@ -63,7 +63,7 @@ class GameService implements IGameService {
     return players.filter(player => player.topSongs.includes(currentSong))
   }
 
-  private async randomizeNewCurrentSong(): Promise<[Song, Player[]]> {
+  private async randomizeNewCurrentSong(): Promise<{currentSong : Song, players : Player[]}> {
     //find a song;
     const uniqueSongs: Promise<Song[]> = this.findSongs();
     const randIndex: number = Math.floor(
@@ -71,14 +71,14 @@ class GameService implements IGameService {
     );
     const newSong: Song | undefined = (await uniqueSongs)[randIndex];
     if (newSong == null) {
-      throw new Error(`No song with index ${randIndex}`);
+      throw new Error(`No song with index ${randIndex}`); // check that index is within bounds
     } 
     //find all players with that song
     const playersWithSong: Promise<Player[]> =
       this.findPlayersWithSong(newSong);
     // set currentSong to the new song
     currentSong = newSong;
-    return [currentSong, (await playersWithSong)]
+    return {currentSong : currentSong, players : (await playersWithSong)}
   }
 }
 
