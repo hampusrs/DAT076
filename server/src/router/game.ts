@@ -1,4 +1,4 @@
-import express, { Request, Response, Router } from "express";
+import express, { Request, Response } from "express";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 import {makeGameService } from "../service/game";
@@ -10,6 +10,7 @@ const gameService = makeGameService();
 
 gameRouter.get("/game", async (req, res) => {
   try {
+    req.params; // ugly solution for typescript
     res.status(200).send(await gameService.getGame());
   } catch (e: any) {
     console.error(e.stack);

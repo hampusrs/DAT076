@@ -25,7 +25,7 @@ const player1: Player = { name: "Bob", topSongs: [song1, song2] };
 const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 const players: Player[] = [player1, player2];
 
-const gameID: number = 123;
+//const gameID: number = 123;
 
 interface IGameService {
   getGame(): Promise<Player[]>;
