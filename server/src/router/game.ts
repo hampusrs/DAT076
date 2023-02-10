@@ -23,10 +23,13 @@ interface GameActionRequest extends Request {
 
 gameRouter.post(
   "/game",
-  async (req: GameActionRequest, res: Response<string | [Song, Player[]]>) => {
+  async (req: GameActionRequest, res: Response<string | { currentSong : Song, players : Player[] }>) => {
     try {
       const action: string = req.body.action;
       if (action == "StartGame") {
+        if(gameService.startGame() == null) {
+          res.status(400) //TODO
+        }
         res.status(200).send(await gameService.startGame());
       } else if (action == "NextSong") {
         res.status(200).send(await gameService.nextSong());

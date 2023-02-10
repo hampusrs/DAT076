@@ -29,20 +29,20 @@ const gameID: number = 123;
 
 interface IGameService {
   getGame(): Promise<Player[]>;
-  startGame(): Promise<[Song, Player[]]>;
+  startGame(): Promise<[Song, Player[]] | undefined>; // returns undefined is game is already started.
   nextSong(): Promise<[Song, Player[]]>;
 }
 
 class GameService implements IGameService {
-  async getGame(): Promise<Player[]> {
+  async getGame(): Promise<Player[]> {   //GetPlayer
     return players;
   }
 
-  async startGame(): Promise<[Song, Player[]]> {
+  async startGame(): Promise<[Song, Player[]] | undefined> {
     if (currentSong == null) {
       return this.randomizeNewCurrentSong();
     } else {
-      throw new Error(`Game has already started`);
+      return undefined;   //returns undefined if game is already started.
     }
   }
 
@@ -55,33 +55,24 @@ class GameService implements IGameService {
   }
 
   async findSongs(): Promise<Song[]> {
-    const uniqueSongs: Set<Song> = new Set();
-
-    players.forEach((player) => {
-      player.topSongs.forEach((song) => {
-        uniqueSongs.add(song);
-      });
-    });
+    const uniqueSongs: Set<Song> = new Set(players.flatMap(player => player.topSongs))
     return Array.from(uniqueSongs);
   }
 
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-    const playerWithSong : Player[] = [];
-    players.forEach( (player) => {
-      if (player.topSongs.includes(currentSong)) {
-        playerWithSong.push(player);
-      }
-    });
-    return playerWithSong;
+    return players.filter(player => player.topSongs.includes(currentSong))
   }
 
-  async randomizeNewCurrentSong(): Promise<[Song, Player[]]> {
+  private async randomizeNewCurrentSong(): Promise<[Song, Player[]]> {
     //find a song;
     const uniqueSongs: Promise<Song[]> = this.findSongs();
     const randIndex: number = Math.floor(
       Math.random() * (await uniqueSongs).length
     );
-    const newSong: Song = (await uniqueSongs)[randIndex];
+    const newSong: Song | undefined = (await uniqueSongs)[randIndex];
+    if (newSong == null) {
+      throw new Error(`No song with index ${randIndex}`);
+    } 
     //find all players with that song
     const playersWithSong: Promise<Player[]> =
       this.findPlayersWithSong(newSong);

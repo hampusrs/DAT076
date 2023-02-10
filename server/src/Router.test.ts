@@ -8,5 +8,6 @@ test("End-to-end test", async () => {
     expect(res1.statusCode).toEqual(200);
     const res2 = await request.post("/game").send({ action : "StartGame"});
     expect(res2.statusCode).toEqual(200);
+    console.log(res2.body);
     expect(res2.body.currentSong).not.toBeNull();
 });
