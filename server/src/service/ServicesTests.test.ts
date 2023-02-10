@@ -2,13 +2,13 @@ import { makeGameService } from "./game";
 
 test("Test that the array of current players in the game have length 2", async () => {
     const gameService = makeGameService();
-    const players = gameService.getGame();
-    expect((await players).length).toEqual(2);
+    const players = (await gameService.getPlayers()).players;
+    expect(players.length).toEqual(2);
 });
 
 test("Test if the first player is named Bob", async () => {
     /*const gameService = makeGameService();
-    const players = gameService.getGame();
+    const players = gameService.getPlayers();
     const name : string = (await players)[0].name; 
     expect(name).toEqual("Bob");*/
 });

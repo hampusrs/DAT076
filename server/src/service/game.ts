@@ -28,14 +28,14 @@ const players: Player[] = [player1, player2];
 //const gameID: number = 123;
 
 interface IGameService {
-  getGame(): Promise<Player[]>;
+  getPlayers(): Promise<{players : Player[]}>;
   startGame(): Promise<{currentSong : Song, players : Player[]} | undefined>; // returns undefined is game is already started.
   nextSong(): Promise<{currentSong : Song, players : Player[]}>;
 }
 
 class GameService implements IGameService {
-  async getGame(): Promise<Player[]> {   //GetPlayer
-    return players;
+  async getPlayers(): Promise<{players : Player[]}> {   //GetPlayer
+    return {players : players};
   }
 
   async startGame(): Promise<{currentSong :Song, players : Player[]} | undefined> {

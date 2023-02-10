@@ -11,7 +11,7 @@ const gameService = makeGameService();
 gameRouter.get("/game", async (req, res) => {
   try {
     req.params; // ugly solution for typescript
-    res.status(200).send(await gameService.getGame());
+    res.status(200).send(await gameService.getPlayers());
   } catch (e: any) {
     console.error(e.stack);
     res.status(500).send(e.message);
@@ -29,7 +29,7 @@ gameRouter.post(
       const action: string = req.body.action;
       if (action == "StartGame") {
         if(gameService.startGame() == null) {
-          res.status(400) //TODO
+          res.status(400).send(`Game has already been started`);
         }
         res.status(200).send(await gameService.startGame());
       } else if (action == "NextSong") {
