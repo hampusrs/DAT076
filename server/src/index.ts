@@ -9,7 +9,6 @@ app.use(express.json());
 app.use(cors());
 
 app.use("/", gameRouter);
-
 const PORT : number = 8080;
 
 app.listen(PORT, () => {
