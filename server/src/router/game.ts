@@ -8,9 +8,8 @@ import {makeGameService } from "../service/game";
 export const gameRouter = express.Router();
 const gameService = makeGameService();
 
-gameRouter.get("/game", async (req, res) => {
+gameRouter.get("/game", async (_, res) => {
   try {
-    req.params; // ugly solution for typescript
     res.status(200).send(await gameService.getPlayers());
   } catch (e: any) {
     console.error(e.stack);
