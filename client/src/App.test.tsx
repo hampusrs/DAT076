@@ -1,6 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import App, {SongItem} from './App';
+import App from './App';
+import {SongItem} from './components/SongItem';
 
 test('Check that app renders next button', () => {
   render(<App />);
@@ -13,3 +14,9 @@ test('Check that song is rendered', () => {
   expect(screen.getByText(/Katy Perry/)).toBeInTheDocument();
   expect(screen.getByText(/Teenage Dream/)).toBeInTheDocument();
 });
+
+test('Check that the start game request is only sent once', () => {
+  
+});
+
+// How to test next song?
