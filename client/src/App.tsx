@@ -32,6 +32,8 @@ export function App() {
 
   async function getPlayers() {
     // request the games players, GET request and set players to the response
+    const response = await axios.get<{players : Player[]}>("http://localhost:8080/game");
+    setPlayers(response.data.players);
   }
 
   async function startGame() {
