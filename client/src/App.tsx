@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import logo from './logo.svg';
 import './App.css';
 import axios from 'axios';
@@ -16,28 +16,36 @@ export interface Player {
 }
 
 function App() {
-  const [currentSong, setCurrentSong] = useState<Song>({title : "placeholder", album: "placeholder", artist : "placeholder", albumCoverPath : "placeholder"});
-
-  async function startGame() {
-    const response = await axios.post<{currentSong : Song, players : Player[]}>("http://localhost:8080/game", { action: 'StartGame' });
-    console.log(response);
-  }
-
-  async function nextSong() {
-    const response = await axios.post<{currentSong : Song, players : Player[]}>("http://localhost:8080/game", { action: 'NextSong' });
-    console.log(currentSong);
-    setCurrentSong(response.data.currentSong);
-  }
+  // currentSong is undefined if game has not yet started, otherwise current song
+  const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
+  const startedGame = useRef<boolean>(false);
 
   useEffect(() => {
     startGame();
   }, []);
 
+  async function startGame() {
+    console.log("startedGame: " + startedGame.current);
+    if (! startedGame.current){
+      console.log("Starting game")
+      startedGame.current = true;
+      const response = await axios.post<{currentSong : Song, players : Player[]}>("http://localhost:8080/game", { action: 'StartGame' });
+      setCurrentSong(response.data.currentSong);
+      console.log("startedGame is now " + startedGame.current)
+    }
+  }
+
+  async function nextSong() {
+    const response = await axios.post<{currentSong : Song, players : Player[]}>("http://localhost:8080/game", { action: 'NextSong' });
+    setCurrentSong(response.data.currentSong);
+  }
 
   return (
     <div className="App">
-      <SongItem title={currentSong?.title} artist={currentSong?.artist} album={currentSong?.album} albumCoverPath="./logo192.png"> </SongItem>
-      <button onClick={nextSong}>Hej</button>
+      {(currentSong == null) 
+      ? <p>Please wait, connecting to server</p>
+      : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
+      <button onClick={nextSong}>Next Song</button>
     </div>
   );
 }
