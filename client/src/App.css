@@ -36,3 +36,7 @@
     transform: rotate(360deg);
   }
 }
+
+#showPlayersButton {
+  color: #61dafb;
+}

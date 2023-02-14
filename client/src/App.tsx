@@ -60,6 +60,11 @@ export function App() {
       : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
       <label> Who has this song as one of their top song? </label>
       <button onClick={nextSong}>Next Song</button>
+      <aside> 
+        <button id="showPlayersButton">
+          Show All Players
+        </button>
+      </aside>
     </div>
   );
 }
