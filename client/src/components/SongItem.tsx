@@ -13,12 +13,12 @@ export function SongItem({
   albumCoverPath,
 }: SongItemProps) {
   return (
-    <section id="songSection">
-      <img src={albumCoverPath} alt={album} />
-      <ul>
-        <li> {title} </li>
-        <li> {artist} </li>
-        <li> {album} </li>
+    <section className="DisplaySong">
+      <img className="AlbumCover" src={albumCoverPath} alt={album} />
+      <ul className="SongInfo">
+        <li className="SongTitle"> {title} </li>
+        <li className="ArtistName"> {artist} </li>
+        <li className="AlbumTitle"> {album} </li>
       </ul>
     </section>
   );

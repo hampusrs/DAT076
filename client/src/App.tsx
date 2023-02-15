@@ -53,11 +53,13 @@ export function App() {
   
   return (
     <div className="App">
-      {(currentSong == null) 
-      ? <p>No Game Right Now</p>
-      : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
-      <label> Who has this song as one of their top song? </label>
-      <button onClick={nextSong}>Next Song</button>
+      <div className='SongItem'>
+          {(currentSong == null) 
+        ? <p>No Game Right Now</p>
+        : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
+          <label className='Question'> Who's top song is this? </label>
+          <button className="NextSongBtn" onClick={nextSong}>Next Song</button>        
+      </div>
     </div>
   );
 }

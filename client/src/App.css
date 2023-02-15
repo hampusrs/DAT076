@@ -1,38 +1,64 @@
 .App {
-  text-align: center;
+  width: 100vw;
+  height: 100vh;
+  padding-top: 12vh;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.SongItem {
   display: flex;
   flex-direction: column;
-  align-items: center;
+}
+
+.DisplaySong {
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  margin: 10vh;
+  align-items: center;
+  gap: 30px;
 }
 
-.App-link {
-  color: #61dafb;
+.AlbumCover {
+  width: auto;
+  height: 17vw
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.SongInfo {
+  height: fit-content;
+  width: fit-content;
+  list-style-type: none;
+}
+
+.SongTitle {
+  font-size: 6vh;
+}
+
+.ArtistName {
+  font-size: 4vh;
+}
+
+.AlbumTitle {
+  font-size: 3vh;
+}
+
+.Question {
+  margin-left: 35vw;
+  margin-right: 35vw;
+  text-align: center;
+  font-size: 4vh;
+}
+
+.NextSongBtn {
+  margin-left: 45vw;
+  margin-right: 45vw;
+  margin-top: 15vh;
+  border-radius: 15px;
+  height: 4vh;
+  font-size: 15px;
+  background-color: #4CAF50;
+  border-color: transparent;
+  font-weight: bold;
+}
+
+.NextSongBtn:hover {
+  background-color: #358f38;
 }
