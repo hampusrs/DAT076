@@ -37,6 +37,25 @@
   }
 }
 
+#showAllPlayersDiv {
+  display: grid; 
+  position: absolute;
+  right: 10vh;
+  top: 5vw;
+}
+
+#playersList {
+  font-size: 2vw;
+  display: grid;
+  position: absolute;
+  top: 5vh;
+}
+
+.playerView {
+  clear: both;
+  overflow:visible;
+}
+
 #showPlayersButton {
-  color: #61dafb;
+  font-size: 1.2vw;
 }
