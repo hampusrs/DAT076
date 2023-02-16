@@ -26,12 +26,19 @@ export function App() {
   const [currentPlayers, setCurrentPlayers] = useState<Player[] | undefined>(undefined);
   // ALL players that are currently in the game
   const [players, setPlayers] = useState<Player[] | undefined>(undefined); 
+  // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
+  const [open,setOpen] = useState<boolean>(false)
+
   const startedGame = useRef<boolean>(false);
 
   useEffect(() => {
     startGame();
   }, []);
   
+  /**
+   * Gets all players that are currently playing the game.
+   * Updates players accordingly.
+   */
   async function getPlayers() {
     // request the games players, GET request and set players to the response
     const response = await axios.get<{players : Player[]}>("http://localhost:8080/game");
@@ -60,6 +67,15 @@ export function App() {
     return <PlayersView pName={player.name}> </PlayersView>
   }
 
+  /**
+   * Since onClick for showPlayersButton has to execute two methods we 
+   * put the both here and then only calls one method in the onClick. */
+  function showPlayerButtonAction() {
+    getPlayers();
+    setOpen(!open);
+  }
+
+
   return (
     <div className="App">
       {(currentSong == null) 
@@ -68,15 +84,15 @@ export function App() {
       <label> Who has this song as one of their top song? </label>
       <button onClick={nextSong}>Next Song</button>
       <div id="showAllPlayersDiv">
-        <button id="showPlayersButton" onClick={getPlayers}>Show all players</button>  
+        <button id="showPlayersButton" onClick={showPlayerButtonAction}>Show all players</button>  
         <div id="playersList">
-          
-          {/* Row below takes each player in players and applies displayPlayer to them */}
-          {players?.map(displayPlayer)}  
-        
+          {/* If open is true then display all players otherwise display nothing. */}
+          {open 
+          ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
+          : null
+          }
         </div>
       </div>
-      
     </div>
   );
 }
