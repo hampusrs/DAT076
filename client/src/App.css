@@ -15,6 +15,7 @@
   margin: 10vh;
   align-items: center;
   gap: 30px;
+  padding-left: 15vw;
 }
 
 .AlbumCover {
@@ -24,7 +25,7 @@
 
 .SongInfo {
   height: fit-content;
-  width: fit-content;
+  width: 30vw;
   list-style-type: none;
 }
 

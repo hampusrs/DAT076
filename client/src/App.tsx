@@ -50,13 +50,15 @@ export function App() {
     setCurrentSong(response.data.currentSong);
     setCurrentPlayers(response.data.players);
   }
-  
+
+  let imagePath : string = "./images/"+currentSong?.title+".jpg"
+
   return (
     <div className="App">
       <div className='SongItem'>
           {(currentSong == null) 
         ? <p>No Game Right Now</p>
-        : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
+        : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath={imagePath}/>}
           <label className='Question'> Who's top song is this? </label>
           <button className="NextSongBtn" onClick={nextSong}>Next Song</button>        
       </div>
