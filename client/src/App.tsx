@@ -95,6 +95,7 @@ export function App() {
           ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
           : null
           }
+          </div>
         </div>
       </div>
     </div>

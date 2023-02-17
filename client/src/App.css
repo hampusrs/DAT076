@@ -63,6 +63,7 @@
 
 .NextSongBtn:hover {
   background-color: #358f38;
+}
 
 .showAllPlayersDiv {
   display: grid; 
