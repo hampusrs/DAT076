@@ -83,9 +83,9 @@ export function App() {
       : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
       <label> Who has this song as one of their top song? </label>
       <button onClick={nextSong}>Next Song</button>
-      <div id="showAllPlayersDiv">
-        <button id="showPlayersButton" onClick={showPlayerButtonAction}>Show all players</button>  
-        <div id="playersList">
+      <div className="showAllPlayersDiv">
+        <button className="showPlayersButton" onClick={showPlayerButtonAction}>Show all players</button>  
+        <div className="playersList">
           {/* If open is true then display all players otherwise display nothing. */}
           {open 
           ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.

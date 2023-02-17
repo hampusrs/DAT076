@@ -37,14 +37,14 @@
   }
 }
 
-#showAllPlayersDiv {
+.showAllPlayersDiv {
   display: grid; 
   position: absolute;
   right: 10vh;
   top: 5vw;
 }
 
-#playersList {
+.playersList {
   font-size: 2vw;
   display: grid;
   position: absolute;
@@ -56,6 +56,6 @@
   overflow:visible;
 }
 
-#showPlayersButton {
+.showPlayersButton {
   font-size: 1.2vw;
 }
