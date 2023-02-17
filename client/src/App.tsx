@@ -62,7 +62,10 @@ export function App() {
     setCurrentPlayers(response.data.players);
   }
 
-  // Creates a PlayerView component for given player.
+
+  let imagePath : string = "./images/"+currentSong?.title+".jpg"
+
+// Creates a PlayerView component for given player.
   function displayPlayer(player : Player) {
     return <PlayersView pName={player.name}> </PlayersView>
   }
@@ -78,12 +81,13 @@ export function App() {
 
   return (
     <div className="App">
-      {(currentSong == null) 
-      ? <p>No Game Right Now</p>
-      : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath="./logo192.png" />}
-      <label> Who has this song as one of their top song? </label>
-      <button onClick={nextSong}>Next Song</button>
-      <div className="showAllPlayersDiv">
+      <div className='SongItem'>
+          {(currentSong == null) 
+        ? <p>No Game Right Now</p>
+        : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath={imagePath}/>}
+          <label className='Question'> Who's top song is this? </label>
+          <button className="NextSongBtn" onClick={nextSong}>Next Song</button>        
+           <div className="showAllPlayersDiv">
         <button className="showPlayersButton" onClick={showPlayerButtonAction}>Show all players</button>  
         <div className="playersList">
           {/* If open is true then display all players otherwise display nothing. */}
@@ -94,7 +98,8 @@ export function App() {
         </div>
       </div>
     </div>
-  );
+    );
+  
 }
 
 export default App; 
