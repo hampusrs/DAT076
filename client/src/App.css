@@ -36,3 +36,26 @@
     transform: rotate(360deg);
   }
 }
+
+.showAllPlayersDiv {
+  display: grid; 
+  position: absolute;
+  right: 10vh;
+  top: 5vw;
+}
+
+.playersList {
+  font-size: 2vw;
+  display: grid;
+  position: absolute;
+  top: 5vh;
+}
+
+.playerView {
+  clear: both;
+  overflow:visible;
+}
+
+.showPlayersButton {
+  font-size: 1.2vw;
+}
