@@ -33,6 +33,7 @@
   font-size: 6vh;
 }
 
+
 .ArtistName {
   font-size: 4vh;
 }
@@ -62,4 +63,26 @@
 
 .NextSongBtn:hover {
   background-color: #358f38;
+
+.showAllPlayersDiv {
+  display: grid; 
+  position: absolute;
+  right: 10vh;
+  top: 5vw;
+}
+
+.playersList {
+  font-size: 2vw;
+  display: grid;
+  position: absolute;
+  top: 5vh;
+}
+
+.playerView {
+  clear: both;
+  overflow:visible;
+}
+
+.showPlayersButton {
+  font-size: 1.2vw;
 }

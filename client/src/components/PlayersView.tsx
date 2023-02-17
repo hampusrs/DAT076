@@ -1,5 +1,12 @@
-
-export function PlayersView () {
-
-    // en liten gardin som man kan trycka på för att visa spelarna som är med i spelet
+interface PlayerViewProps {
+    pName : string;
+    children ?: React.ReactNode;
 }
+
+export function PlayersView ({pName}: PlayerViewProps) {
+    return (
+        <div className="playerView"> {pName} </div> 
+    );
+}
+
+export default PlayersView;
