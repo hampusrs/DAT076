@@ -5,6 +5,7 @@ import {SongItem} from './components/SongItem';
 import {PlayersView} from "./components/PlayersView"
 import RevealPlayersCard from "./components/RevealPlayersCard"
 
+
 import axios from 'axios';
 import {Dropdown} from 'react-bootstrap';
 
@@ -29,10 +30,31 @@ export function App() {
     const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
     const [open, setOpen] = useState<boolean>(false)
+  title: string;
+  album: string;
+  artist: string;
+  albumCoverPath: string;
+}
+
+export interface Player {
+  name: string;
+  topSongs: Song[];
+}
+
+export function App() {
+  // currentSong is undefined if game has not yet started, otherwise current song
+  const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
+  // players that has current song as top song
+  const [currentPlayers, setCurrentPlayers] = useState<Player[] | undefined>(undefined);
+  // ALL players that are currently in the game
+  const [players, setPlayers] = useState<Player[] | undefined>(undefined);
+  // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
+  const [open, setOpen] = useState<boolean>(false)
 
     //const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     const [reset, setReset] = useState<boolean>(false)
     const startedGame = useRef<boolean>(false);
+
 
     useEffect(() => {
         startGame();
@@ -46,6 +68,30 @@ export function App() {
         // request the games players, GET request and set players to the response
         const response = await axios.get<{ players: Player[] }>("http://localhost:8080/game");
         setPlayers(response.data.players);
+
+  useEffect(() => {
+    startGame();
+  }, []);
+
+  /**
+   * Gets all players that are currently playing the game.
+   * Updates players accordingly.
+   */
+  async function getPlayers() {
+    // request the games players, GET request and set players to the response
+    const response = await axios.get<{ players: Player[] }>("http://localhost:8080/game");
+    setPlayers(response.data.players);
+  }
+
+  async function startGame() {
+    if (!startedGame.current) {
+      startedGame.current = true;
+      const response = await axios.post<{ currentSong: Song, players: Player[] }>("http://localhost:8080/game", { action: 'StartGame' });
+      setCurrentSong(response.data.currentSong);
+      setCurrentPlayers(response.data.players);
+    } else {
+      nextSong();
+
     }
 
     async function startGame() {
@@ -61,6 +107,13 @@ export function App() {
             nextSong();
         }
     }
+
+  async function nextSong() {
+    const response = await axios.post<{ currentSong: Song, players: Player[] }>("http://localhost:8080/game", { action: 'NextSong' });
+    setCurrentSong(response.data.currentSong);
+    setCurrentPlayers(response.data.players);
+  }
+
 
     async function nextSong() {
         setReset(false);
