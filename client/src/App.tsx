@@ -82,19 +82,19 @@ export function App() {
   return (
     <div className="App">
       <div className='SongItem'>
-        {(currentSong == null)
-          ? <p>No Game Right Now</p>
-          : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath={imagePath} />}
-        <label className='Question'> Who's top song is this? </label>
-        <button className="NextSongBtn GreenButton" onClick={nextSong}>Next Song</button>
-        <div className="showAllPlayersDiv">
-          <button className="showPlayersButton GreenButton" onClick={showPlayerButtonAction}>Show all players</button>
-          <div className="playersList">
-            {/* If open is true then display all players otherwise display nothing. */}
-            {open
-              ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
-              : null
-            }
+          {(currentSong == null) 
+        ? <p>No Game Right Now</p>
+        : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album} albumCoverPath={imagePath}/>}
+          <label className='Question'> Who's top song is this? </label>
+          <button className="NextSongBtn" onClick={nextSong}>Next Song</button>        
+           <div className="showAllPlayersDiv">
+        <button className="showPlayersButton" onClick={showPlayerButtonAction}>Show all players</button>  
+        <div className="playersList">
+          {/* If open is true then display all players otherwise display nothing. */}
+          {open 
+          ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
+          : null
+          }
           </div>
         </div>
       </div>
