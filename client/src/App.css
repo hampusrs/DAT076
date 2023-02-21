@@ -53,16 +53,20 @@
   margin-left: 45vw;
   margin-right: 45vw;
   margin-top: 15vh;
-  border-radius: 15px;
   height: 4vh;
   font-size: 15px;
+}
+
+.GreenButton {
   background-color: #4CAF50;
   border-color: transparent;
   font-weight: bold;
+  border-radius: 15px;
 }
 
-.NextSongBtn:hover {
+.GreenButton:hover {
   background-color: #358f38;
+}
 
 .showAllPlayersDiv {
   display: grid; 
