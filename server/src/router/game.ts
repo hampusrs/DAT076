@@ -32,7 +32,7 @@ gameRouter.post(
         }
         res.status(200).send(await gameService.startGame());
       } else if (action == "NextSong") {
-        res.status(200).send(await gameService.nextSong());
+          res.status(200).send(await gameService.nextSong());
       } else {
         res.status(400).send(`The action ${action} is not defined`);
       }
