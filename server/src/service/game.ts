@@ -26,6 +26,7 @@ const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 const players: Player[] = [player1, player2];
 
 //const gameID: number = 123;
+let gameHasStarted : boolean = false;
 
 interface IGameService {
   getPlayers(): Promise<{players : Player[]}>;
@@ -38,8 +39,9 @@ class GameService implements IGameService {
     return {players : players};
   }
 
-  async startGame(): Promise<{currentSong :Song, players : Player[]} | undefined> {
+  async startGame(): Promise<{currentSong : Song, players : Player[]} | undefined> {
     if (currentSong == null) {
+      gameHasStarted = true;
       return this.randomizeNewCurrentSong();
     } else {
       return undefined;   //returns undefined if game is already started.
