@@ -2,6 +2,7 @@ import express, { Request, Response } from "express";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 import {makeGameService } from "../service/game";
+import { ResolveOptions } from "dns";
 //POST to /game with body { "action" : "start" } Responds with { currentSong : ..., currentPlayer : ...}, error response if game has already started.
 //POST to /game with body { "action" : "next song" } Responds with { currentSong: ..., currentPlayers: ...}, error response if game has not started.
 //POST to /game with body { "action" : "end game"} Responds with 200 empty body if game has started, error response if game has not started.
@@ -20,6 +21,15 @@ gameRouter.get("/game", async (_, res) => {
 interface GameActionRequest extends Request {
   body: { action: string };
 }
+
+gameRouter.get("/game/started", async (_, res: Response<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song}>) => {
+  try{
+    res.status(200).send(await gameService.isAlreadyStarted());
+  }catch (e: any){
+    console.error(e.stack);
+    res.status(400).send(e.message);
+  }
+});
 
 gameRouter.post(
   "/game",
