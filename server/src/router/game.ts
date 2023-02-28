@@ -2,11 +2,12 @@ import express, { Request, Response } from "express";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 import {makeGameService } from "../service/game";
-//POST to /game with body { "action" : "start" } Responds with { currentSong : ..., currentPlayer : ...}, error response if game has already started.
-//POST to /game with body { "action" : "next song" } Responds with { currentSong: ..., currentPlayers: ...}, error response if game has not started.
-//POST to /game with body { "action" : "end game"} Responds with 200 empty body if game has started, error response if game has not started.
 export const gameRouter = express.Router();
 const gameService = makeGameService();
+
+import querystring from 'query-string';
+import dotenv from 'dotenv';
+dotenv.config();
 
 gameRouter.get("/game", async (_, res) => {
   try {
@@ -42,3 +43,35 @@ gameRouter.post(
     }
   }
 );
+
+
+gameRouter.get('/login', (req, res) => {
+  const state = generateRandomString(16);
+  res.cookie('spotify_auth_state', state); 
+
+  const scope = 'user-top-read';
+
+  const CLIENT_ID = process.env["CLIENT_ID"];
+  const CLIENT_SECRET = process.env["CLIENT_SECRET"];
+  const REDIRECT_URI = process.env["REDIRECT_URI"];
+
+  /*const queryParams = querystring.stringify({
+    client_id: CLIENT_ID,
+    response_type: 'code',
+    redirect_uri: REDIRECT_URI,
+    state: state,
+    scope: scope
+  });*/
+  res.redirect(`https://accounts.spotify.com/authorize?client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}`);
+  //res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
+
+})
+
+const generateRandomString = (length : number) => {
+  let text = '';
+  const possible = 'ABDDEFGHIJKLMNOPQRSTUVXYZabcdefghiijklmnopqrstuvxyz0123456789';
+  for (let i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+  return text;
+}
