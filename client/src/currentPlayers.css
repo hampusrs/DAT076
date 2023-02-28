@@ -1,0 +1,39 @@
+.CurrentPlayers{
+    width: 99vw;
+    height: 99vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+}
+
+.PlayerTable {
+    width: 40vw;
+    height: 40vh;
+    background-color: red;
+    align-self: center;
+    padding: 3vh;
+}
+
+.StartGameBtn {
+    align-self: center;
+    margin-top: 10vh;
+    background-color: #4CAF50;
+    border-color: transparent;
+    border-radius: 50px;
+    width: fit-content;
+    height: fit-content;
+    padding: 4vh;
+}
+
+.Content{
+    width: 20vw;
+    height: 20vh;
+    margin:auto;
+    background-color: blue;
+}
+
+.Label {
+    font-weight: bold;
+    font-size: x-large;
+}

@@ -85,3 +85,10 @@ class GameService implements IGameService {
 export function makeGameService() {
   return new GameService();
 }
+
+/* 
+TODO:
+- display currentPlayers
+- continuisly check if game has stareted and updates player if anyone has joined
+- a button that starts the game
+*/
