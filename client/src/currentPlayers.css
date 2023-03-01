@@ -27,11 +27,18 @@
     padding: 4vh;
 }
 
+.StartGameBtn:hover {background-color: #4caf4fd1}
+
+.StartGameBtn:active {
+  background-color: #4caf4fd1;
+  transform: translateY(4px);
+}
+
 .Content{
     width: 40vw;
     height: 40vh;
     margin:auto;
-    background-color: blue;
+    background-color: rgb(181, 181, 181);
     overflow:scroll;
     overflow-x:hidden;
 }
