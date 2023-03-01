@@ -87,13 +87,21 @@ gameRouter.get('/callback', (req,res) => {
       // request spotify data
       const {access_token, token_type} = response.data;
 
-      axios.get('https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5', {
+      axios.get('https://api.spotify.com/v1/me/top/tracks?limit=20', {
         headers: {
           Authorization: `${token_type} ${access_token}`
         }
-      }).then(response => {
-        console.log(response.data);
-        res.send(`<pre>${JSON.stringify(response.data, null,2)}</pre>`) // response!
+      }).then(response => {   // response with players songs
+        const topSongs : Song[] = [];
+        const tracks = response.data;
+        tracks.items.map((track : any) => {
+          //const albumCover : string = track.album.images[0];
+          const song : Song = {id : track.id, title : track.name, album : track.album.name, artist : track.artists[0].name}
+          topSongs.push(song);
+        })
+        console.log(topSongs)
+        //gameService.addPlayer()
+        res.send(`<pre>${JSON.stringify(response.data, null,2)}</pre>`) 
       })
     }
   }).catch(error => { // response was not sucessful, no authorization code
