@@ -20,16 +20,11 @@ const song3: Song = {
   album: "True",
   artist: "Avicii",
 };
-let currentSong: Song | undefined;
 
 const player1: Player = { name: "Bob", topSongs: [song1, song2] };
 const player2: Player = { name: "Jane", topSongs: [song2, song3] };
-const players: Player[] = [player1, player2];
 
 //const gameID: number = 123;
-let gameHasStarted: boolean = false;
-
-let index: number = 0;
 
 interface IGameService {
   getPlayers(): Promise<{ players: Player[] }>;
@@ -38,29 +33,47 @@ interface IGameService {
 }
 
 class GameService implements IGameService {
+  allPlayers: Player[] = [player1, player2];
+  gameHasStarted: boolean = false;
+  currentSong: Song | undefined;
+  index: number = 0;           //TABORT
+  shuffledSongs: Promise<Song[]> =  this.shuffleSongs(this.findSongs());
+
   async getPlayers(): Promise<{ players: Player[] }> {   //GetPlayer
-    return { players: players };
+    return { players: this.allPlayers };
   }
 
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
-    if (currentSong == null) {
-      gameHasStarted = true;
+    if (this.currentSong == null) {
+      this.gameHasStarted = true;
+      //setupSongs?
       return this.randomizeNewCurrentSong();
     } else {
       return undefined;   //returns undefined if game is already started.
     }
   }
 
+  private async addPlayer(username: string, topSongs : Song[]) {
+    const p: Player = { name: username, topSongs: topSongs };
+    this.allPlayers.push(p);
+  }
+  
+  // async setupSongs() {
+  //   //Gets all the songs. 
+  //   const uniqueSongs: Promise<Song[]> = this.findSongs();
+  //   //Gets shuffled array of all songs.
+  //   this.shuffledSongs = await this.shuffleSongs(uniqueSongs);
+  // }
 
   async isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }> {
-    if (currentSong == null) {
-      return { gameHasStarted: gameHasStarted, currentPlayers: players };
+    if (this.currentSong == null) {
+      return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers };
     }
-    return { gameHasStarted: gameHasStarted, currentPlayers: players, currentSong: currentSong };
+    return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
   }
 
   async nextSong(): Promise<{ currentSong: Song, players: Player[] }> {
-    if (currentSong == null) {
+    if (this.currentSong == null) {
       throw new Error(`Game has not started yet`);
     } else {
       return this.randomizeNewCurrentSong();
@@ -68,55 +81,56 @@ class GameService implements IGameService {
   }
 
   async findSongs(): Promise<Song[]> {
-    const uniqueSongs: Set<Song> = new Set(players.flatMap(player => player.topSongs));
+    const uniqueSongs: Set<Song> = new Set(this.allPlayers.flatMap(player => player.topSongs));
     return Array.from(uniqueSongs);
   }
 
   // Returns all players that have the given song as one of their topsongs. 
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-    return players.filter(player => player.topSongs.includes(currentSong));
+    return this.allPlayers.filter(player => player.topSongs.includes(currentSong));
   }
 
   // Shuffles the given Song array.
-  private async shuffleSongs(uniqueSongs : Promise<Song[]>): Promise<Song[]> {
+  private async shuffleSongs(uniqueSongs: Promise<Song[]>): Promise<Song[]> {
     // Shuffles the uniqueSongs array.
-    ([...uniqueSongs]) => {
+
+    const shuffle = ([...uniqueSongs]) => {
       let m = uniqueSongs.length;
       while (m) {
         const i = Math.floor(Math.random() * m--);
         [uniqueSongs[m], uniqueSongs[i]] = [uniqueSongs[i], uniqueSongs[m]];
       }
+      return uniqueSongs;
     };
-    return uniqueSongs;
+    const shuffledSongs = shuffle(await uniqueSongs);
+    return shuffledSongs;
   }
 
   // Should update the global index variable
-  private async getNextIndex() : Promise<void> {
+  private async getNextIndex(): Promise<void> {
     // If the index will still be in range after being increased by one
     // Increse it by one, else set it to zero.
-    if(index + 1 < (await this.findSongs()).length) {
-      index++;
+    if (this.index + 1 < (await this.findSongs()).length) {
+      this.index++;
     } else {
-      index = 0;
+      console.log(`You have reached the end of the songs`);
+      this.index = 0;
     }
   }
 
   private async randomizeNewCurrentSong(): Promise<{ currentSong: Song, players: Player[] }> {
-    const uniqueSongs : Promise<Song[]> = this.findSongs();
-    //Gets shuffled array of all songs.
-    const shuffledSongs: Promise<Song[]> = this.shuffleSongs(uniqueSongs);
     //Updates index.
     this.getNextIndex();
     //Gets the new song that will be the next currentSong.
-    let newSong : Song | undefined = (await shuffledSongs)[index];
-    if(newSong == null) {
-      throw new Error(`No song with index ${index}`);
+    let newSong: Song | undefined = (await this.shuffledSongs)[this.index];
+    if (newSong == null) {
+      throw new Error(`No song with index ${this.index}`);
     }
     //Finds all players with that song in their topsongs.
     const playersWithSong: Promise<Player[]> = this.findPlayersWithSong(newSong);
     //Updates currentSong
-    currentSong = newSong;
-    return {currentSong: currentSong, players: (await playersWithSong)}
+    this.currentSong = newSong;
+    return { currentSong: this.currentSong, players: (await playersWithSong) }
   }
 }
 
