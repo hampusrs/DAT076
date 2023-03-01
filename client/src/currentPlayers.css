@@ -1,18 +1,19 @@
 .CurrentPlayers{
-    width: 99vw;
-    height: 99vh;
+    width: 100vw;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
-
+    background-color: black;
 }
 
 .PlayerTable {
     width: 40vw;
     height: 40vh;
-    background-color: red;
+    background-color: white;
     align-self: center;
-    padding: 3vh;
+    padding: 1vh;
+    scroll-behavior: auto;
 }
 
 .StartGameBtn {
@@ -27,10 +28,12 @@
 }
 
 .Content{
-    width: 20vw;
-    height: 20vh;
+    width: 40vw;
+    height: 40vh;
     margin:auto;
     background-color: blue;
+    overflow:scroll;
+    overflow-x:hidden;
 }
 
 .Label {

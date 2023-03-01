@@ -21,10 +21,6 @@ export interface Player {
     topSongs: Song[];
 }
 
-export interface Player {
-    name: string;
-    topSongs: Song[];
-}
 
 export function App() {
     // currentSong is undefined if game has not yet started, otherwise current song
