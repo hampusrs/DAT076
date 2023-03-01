@@ -1,5 +1,6 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
+import { getEnabledCategories } from "trace_events";
 
 const song1: Song = {
   id: 1,
@@ -27,6 +28,8 @@ const players: Player[] = [player1, player2];
 
 //const gameID: number = 123;
 let gameHasStarted: boolean = false;
+
+let index: number = 0;
 
 interface IGameService {
   getPlayers(): Promise<{ players: Player[] }>;
@@ -65,30 +68,55 @@ class GameService implements IGameService {
   }
 
   async findSongs(): Promise<Song[]> {
-    const uniqueSongs: Set<Song> = new Set(players.flatMap(player => player.topSongs))
+    const uniqueSongs: Set<Song> = new Set(players.flatMap(player => player.topSongs));
     return Array.from(uniqueSongs);
   }
 
+  // Returns all players that have the given song as one of their topsongs. 
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-    return players.filter(player => player.topSongs.includes(currentSong))
+    return players.filter(player => player.topSongs.includes(currentSong));
+  }
+
+  // Shuffles the given Song array.
+  private async shuffleSongs(uniqueSongs : Promise<Song[]>): Promise<Song[]> {
+    // Shuffles the uniqueSongs array.
+    ([...uniqueSongs]) => {
+      let m = uniqueSongs.length;
+      while (m) {
+        const i = Math.floor(Math.random() * m--);
+        [uniqueSongs[m], uniqueSongs[i]] = [uniqueSongs[i], uniqueSongs[m]];
+      }
+    };
+    return uniqueSongs;
+  }
+
+  // Should update the global index variable
+  private async getNextIndex() : Promise<void> {
+    // If the index will still be in range after being increased by one
+    // Increse it by one, else set it to zero.
+    if(index + 1 < (await this.findSongs()).length) {
+      index++;
+    } else {
+      index = 0;
+    }
   }
 
   private async randomizeNewCurrentSong(): Promise<{ currentSong: Song, players: Player[] }> {
-    //find a song;
-    const uniqueSongs: Promise<Song[]> = this.findSongs();
-    const randIndex: number = Math.floor(
-      Math.random() * (await uniqueSongs).length
-    );
-    const newSong: Song | undefined = (await uniqueSongs)[randIndex];
-    if (newSong == null) {
-      throw new Error(`No song with index ${randIndex}`); // check that index is within bounds
+    const uniqueSongs : Promise<Song[]> = this.findSongs();
+    //Gets shuffled array of all songs.
+    const shuffledSongs: Promise<Song[]> = this.shuffleSongs(uniqueSongs);
+    //Updates index.
+    this.getNextIndex();
+    //Gets the new song that will be the next currentSong.
+    let newSong : Song | undefined = (await shuffledSongs)[index];
+    if(newSong == null) {
+      throw new Error(`No song with index ${index}`);
     }
-    //find all players with that song
-    const playersWithSong: Promise<Player[]> =
-      this.findPlayersWithSong(newSong);
-    // set currentSong to the new song
+    //Finds all players with that song in their topsongs.
+    const playersWithSong: Promise<Player[]> = this.findPlayersWithSong(newSong);
+    //Updates currentSong
     currentSong = newSong;
-    return { currentSong: currentSong, players: (await playersWithSong) }
+    return {currentSong: currentSong, players: (await playersWithSong)}
   }
 }
 
