@@ -37,16 +37,18 @@ class GameService implements IGameService {
   gameHasStarted: boolean = false;
   currentSong: Song | undefined;
   index: number = 0;           //TABORT
-  shuffledSongs: Promise<Song[]> =  this.findSongs();
+  shuffledSongs: Song[] =  [];
 
   async getPlayers(): Promise<{ players: Player[] }> {   //GetPlayer
     return { players: this.allPlayers };
   }
 
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
+    console.log(this.currentSong);
     if (this.currentSong == null) {
       this.gameHasStarted = true;
-      this.setupSongs();
+      await this.setupSongs();
+      console.log(this.shuffledSongs);
       return this.randomizeNewCurrentSong();
     } else {
       return undefined;   //returns undefined if game is already started.
@@ -55,6 +57,9 @@ class GameService implements IGameService {
 
   private async addPlayer(username: string, topSongs : Song[]) {
     const p: Player = { name: username, topSongs: topSongs };
+    if (this.allPlayers.filter((player => player.name == username)).length > 0) {
+      throw new Error(`Player with username: ${username} already exists`);
+    }
     this.allPlayers.push(p);
   }
   
@@ -62,7 +67,7 @@ class GameService implements IGameService {
     //Gets all the songs. 
     const uniqueSongs: Promise<Song[]> = this.findSongs();
     //Gets shuffled array of all songs.
-    this.shuffledSongs = this.shuffleSongs(uniqueSongs);
+    this.shuffledSongs = await this.shuffleSongs(uniqueSongs);
   }
 
   async isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }> {
