@@ -29,7 +29,7 @@ const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 interface IGameService {
   getPlayers(): Promise<{ players: Player[] }>;
   startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined>; // returns undefined is game is already started.
-  nextSong(): Promise<{ currentSong: Song, players: Player[] }>;
+  nextSong(): Promise<{ currentSong: Song, players: Player[] } | undefined>;
 }
 
 class GameService implements IGameService {
@@ -37,7 +37,7 @@ class GameService implements IGameService {
   gameHasStarted: boolean = false;
   currentSong: Song | undefined;
   index: number = 0;           //TABORT
-  shuffledSongs: Promise<Song[]> =  this.shuffleSongs(this.findSongs());
+  shuffledSongs: Promise<Song[]> =  this.findSongs();
 
   async getPlayers(): Promise<{ players: Player[] }> {   //GetPlayer
     return { players: this.allPlayers };
@@ -46,7 +46,7 @@ class GameService implements IGameService {
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
     if (this.currentSong == null) {
       this.gameHasStarted = true;
-      //setupSongs?
+      this.setupSongs();
       return this.randomizeNewCurrentSong();
     } else {
       return undefined;   //returns undefined if game is already started.
@@ -58,12 +58,12 @@ class GameService implements IGameService {
     this.allPlayers.push(p);
   }
   
-  // async setupSongs() {
-  //   //Gets all the songs. 
-  //   const uniqueSongs: Promise<Song[]> = this.findSongs();
-  //   //Gets shuffled array of all songs.
-  //   this.shuffledSongs = await this.shuffleSongs(uniqueSongs);
-  // }
+  private async setupSongs() : Promise<void> {
+    //Gets all the songs. 
+    const uniqueSongs: Promise<Song[]> = this.findSongs();
+    //Gets shuffled array of all songs.
+    this.shuffledSongs = this.shuffleSongs(uniqueSongs);
+  }
 
   async isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }> {
     if (this.currentSong == null) {
@@ -72,7 +72,7 @@ class GameService implements IGameService {
     return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
   }
 
-  async nextSong(): Promise<{ currentSong: Song, players: Player[] }> {
+  async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
     if (this.currentSong == null) {
       throw new Error(`Game has not started yet`);
     } else {
@@ -113,7 +113,6 @@ class GameService implements IGameService {
     if (this.index + 1 < (await this.findSongs()).length) {
       this.index++;
     } else {
-      console.log(`You have reached the end of the songs`);
       this.index = 0;
     }
   }
