@@ -2,10 +2,6 @@ import express, { Request, Response } from "express";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 import {makeGameService } from "../service/game";
-import { ResolveOptions } from "dns";
-//POST to /game with body { "action" : "start" } Responds with { currentSong : ..., currentPlayer : ...}, error response if game has already started.
-//POST to /game with body { "action" : "next song" } Responds with { currentSong: ..., currentPlayers: ...}, error response if game has not started.
-//POST to /game with body { "action" : "end game"} Responds with 200 empty body if game has started, error response if game has not started.
 export const gameRouter = express.Router();
 const gameService = makeGameService();
 import queryString from "query-string";
@@ -148,13 +144,13 @@ gameRouter.get("/callback", async (req, res) => {
           title: track.name,
           album: track.album.name,
           artist: track.artists[0].name,
+          albumCoverURI: track.album.images[1]
         };
         topSongs.push(song);
       });
 
-      const newPlayer : Player = {name : playerName, topSongs : topSongs}
-      //gameService.addPlayer(player_name, topSongs) // TODO: fix when addPlayer has been implemented in gameService
-      res.send(JSON.stringify(newPlayer,null,2));
+      gameService.addPlayer(playerName, topSongs);
+      res.send(gameService.allPlayers).status(200);
     }
   } catch (error) {
     res.send(error);

@@ -1,30 +1,5 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
-import { getEnabledCategories } from "trace_events";
-
-const song1: Song = {
-  id: 1,
-  title: "Firework",
-  album: "Teenage Dream",
-  artist: "Katy Perry",
-};
-const song2: Song = {
-  id: 2,
-  title: "Baby",
-  album: "My Worlds",
-  artist: "Justin Bieber",
-};
-const song3: Song = {
-  id: 3,
-  title: "Levels",
-  album: "True",
-  artist: "Avicii",
-};
-
-const player1: Player = { name: "Bob", topSongs: [song1, song2] };
-const player2: Player = { name: "Jane", topSongs: [song2, song3] };
-
-//const gameID: number = 123;
 
 interface IGameService {
   getPlayers(): Promise<{ players: Player[] }>;
@@ -33,7 +8,7 @@ interface IGameService {
 }
 
 class GameService implements IGameService {
-  allPlayers: Player[] = [player1, player2];
+  allPlayers: Player[] = [];
   gameHasStarted: boolean = false;
   currentSong: Song | undefined;
   index: number = 0;           //TABORT
@@ -55,7 +30,7 @@ class GameService implements IGameService {
     }
   }
 
-  private async addPlayer(username: string, topSongs : Song[]) {
+  async addPlayer(username: string, topSongs : Song[]) {
     const p: Player = { name: username, topSongs: topSongs };
     if (this.allPlayers.filter((player => player.name == username)).length > 0) {
       throw new Error(`Player with username: ${username} already exists`);
