@@ -1,5 +1,6 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
+import { getEnabledCategories } from "trace_events";
 
 interface IGameService {
   getPlayers(): Promise<{ players: Player[] }>;
@@ -29,6 +30,7 @@ class GameService implements IGameService {
       return undefined;   //returns undefined if game is already started.
     }
   }
+
 
   async addPlayer(username: string, topSongs : Song[]) {
     const p: Player = { name: username, topSongs: topSongs };
@@ -116,3 +118,10 @@ class GameService implements IGameService {
 export function makeGameService() {
   return new GameService();
 }
+
+/* 
+TODO:
+- display currentPlayers
+- continuisly check if game has stareted and updates player if anyone has joined
+- a button that starts the game
+*/

@@ -85,6 +85,7 @@
   display: grid;
   position: absolute;
   top: 5vh;
+  align-items: center;
 }
 
 .playerView {
