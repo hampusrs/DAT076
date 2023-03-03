@@ -5,10 +5,10 @@ import {Dropdown} from 'react-bootstrap';
 
 export function Login() {
     async function loginWithSpotify() {
-        console.log("Hello!");
-        const response = await axios.get<{ redirectUri: string }>("http://localhost:8080/login");
-        const { redirectUri } = response.data;
-        window.location.href = redirectUri;
+        //console.log("Hello!");
+        //const response = await axios.get<{ redirectUri: string }>("http://localhost:8080/login");
+        //const { redirectUri } = response.data;
+        window.location.href = "http://localhost:8080/login";
     }
 
     return (
