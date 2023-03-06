@@ -86,7 +86,12 @@ test("Check that startGame returns the currentSong and accurate list of players 
 });
 
 test("Checks if findPlayersWithSong gives the correct players with that top song",async () => {
-
+    const gameService = makeGameService();
+    gameService.addPlayer(player1.name, player1.topSongs);
+    gameService.addPlayer(player2.name, player2.topSongs);
+    expect((await gameService.findPlayersWithSong(song1)).length).toEqual(1);
+    expect((await gameService.findPlayersWithSong(song2)).length).toEqual(2);
+    expect((await gameService.findPlayersWithSong(song3)).length).toEqual(1);
 })
 
 test("Test so adding one player doesn't return undefined but adding the same player again should",async () => {
@@ -95,54 +100,56 @@ test("Test so adding one player doesn't return undefined but adding the same pla
     expect(await gameService.addPlayer(player1.name, player1.topSongs)).toEqual(undefined);
 })
 
-test("Check that nextSong doesn't give the same song again.", () => {
-    // nextSong, Checks that the song given by the method isn't the same. 
+test("Check that nextSong doesn't give the same song again.", async () => {
+    const gameService = makeGameService();
+    gameService.addPlayer(player1.name, player1.topSongs);
+    gameService.addPlayer(player2.name, player2.topSongs);
+    await gameService.startGame();
+    const firstSong = gameService.currentSong;
+    const secondSong = gameService.nextSong();
+    expect(firstSong).not.toEqual(secondSong);
+    
+
   });
-/*
+
+  
 test("Test that the array of current players in the game have length 2", async () => {
     const gameService = makeGameService();
+    gameService.addPlayer(player1.name, player1.topSongs);
+    gameService.addPlayer(player2.name, player2.topSongs);
     const players = (await gameService.getPlayers()).players;
     expect(players.length).toEqual(2);
 });
 
+
 test("Test if the first player is named Bob", async () => {
-    // const gameService = makeGameService();
-    // const players = gameService.getPlayers();
-    // const name : string = (await players)[0].name; 
-    // expect(name).toEqual("Bob");
+    const gameService = makeGameService();
+    gameService.addPlayer(player1.name, player1.topSongs);
+    gameService.addPlayer(player2.name, player2.topSongs);
+    if(gameService.allPlayers[0] == undefined) {
+      return;
+    }
+    const name = gameService.allPlayers[0].name;
+    expect(name).toEqual("Bob");
 });
+
 
 test("Check if the list of songs does not contain duplicates", async () => { 
     const gameService = makeGameService();
+    gameService.addPlayer(player1.name, player1.topSongs)
+    gameService.addPlayer(player2.name, player2.topSongs);
     const songs = gameService.findSongs();
     expect((await songs).length).toEqual(3);
-});
-
-test("Check if song is not in list of top songs for a chosen player", async () => {
-    const gameService = makeGameService();
-    const currentSong = (await gameService.findSongs())[2]
-    if (currentSong == null) {throw new Error("currentSong is null")};
-    const players = gameService.findPlayersWithSong(currentSong);
-    const playerNames : string[] = []; 
-    (await players).forEach(player => {
-        playerNames.push(player.name);
-    });
-    expect(playerNames.includes("Bob")).toBeFalsy();
 });
 
 
 test("Find player that has currentSong as top song", async () => {
     const gameService = makeGameService();
-    const currentSong = (await gameService.findSongs())[0];
-    if (currentSong == null) {throw new Error("currentSong is null")};
-    const players = gameService.findPlayersWithSong(currentSong);
-    const playerNames : string[] = new Array<string>();
-    (await players).forEach(player => {
-        playerNames.push(player.name);
-    });
-    expect(playerNames.includes("Bob")).toBeTruthy();
+    gameService.addPlayer(player1.name, player1.topSongs)
+    gameService.addPlayer(player2.name, player2.topSongs);
+    gameService.currentSong = song1;
+    const playersWithSong = await gameService.findPlayersWithSong(gameService.currentSong);
+    const playersWithNameBob = playersWithSong.filter(player => player.name == "Bob")
+    expect(playersWithNameBob.length).toEqual(1);
    
 });
-
-
-*/
