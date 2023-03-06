@@ -44,12 +44,9 @@ class GameService implements IGameService {
   }
 
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
-    console.log(this.currentSong);
-    console.log("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa^^^^^^^^^^");
     if (this.currentSong == null) {
       this.gameHasStarted = true;
       await this.setupSongs();
-      console.log(this.shuffledSongs); // REMOVE
       this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1);
       if (this.currentSong == null) {
         return undefined; 
@@ -87,8 +84,6 @@ class GameService implements IGameService {
       throw new Error(`Game has not started yet`);
     } else {
       this.currentSong = this.shuffledSongs.pop();
-      console.log(this.shuffledSongs); // REMOVE
-      console.log("Efter pop i nextsong ^^^^^")
       if (this.currentSong == null) {
         return undefined;
       }
