@@ -1,7 +1,6 @@
 .App {
-  width: 100vw;
-  height: 100vh;
-  padding-top: 12vh;
+  width: 90vw;
+  height: 90vh;
 }
 
 .SongItem {
@@ -56,9 +55,9 @@
 }
 
 .NextSongBtn {
-  margin-left: 45vw;
-  margin-right: 45vw;
-  margin-top: 15vh;
+  margin-left: 40vw;
+  margin-right: 40vw;
+  margin-top: 5vh;
   height: 4vh;
   font-size: 15px;
 }
@@ -86,6 +85,7 @@
   display: grid;
   position: absolute;
   top: 5vh;
+  align-items: center;
 }
 
 .playerView {
