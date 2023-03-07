@@ -1,6 +1,5 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
-import { getEnabledCategories } from "trace_events";
 
 interface IGameService {
   getPlayers(): Promise<{ players: Player[] }>;
