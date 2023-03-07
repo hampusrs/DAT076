@@ -180,8 +180,10 @@ gameRouter.get("/callback", async (req, res) => {
           const addPlayerResponse : Player | undefined = await gameService.addPlayer(playerName, topSongs);
           if (addPlayerResponse == null) {
             res.status(400).send(`Player ${playerName} is already in the game`)
-          } else {
-            res.send(gameService.allPlayers).status(200);
+          } else { // Player was added to game 
+            const allPlayers : Player[] = gameService.allPlayers;
+            // redirect to frontend, and send all players in query
+            res.status(200).redirect(`http://localhost:3000?${queryString.stringify({'allPlayers':JSON.stringify(allPlayers)})}`);
           }
         }
 
