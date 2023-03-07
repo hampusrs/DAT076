@@ -181,9 +181,10 @@ gameRouter.get("/callback", async (req, res) => {
           if (addPlayerResponse == null) {
             res.status(400).send(`Player ${playerName} is already in the game`)
           } else { // Player was added to game 
-            const allPlayers : Player[] = gameService.allPlayers;
+            // only send the players' names (to avoid cheating)
+            const allPlayersNames : String[] = gameService.allPlayers.map((player) => player.name);
             // redirect to frontend, and send all players in query
-            res.status(200).redirect(`http://localhost:3000?${queryString.stringify({'allPlayers':JSON.stringify(allPlayers)})}`);
+            res.status(200).redirect(`http://localhost:3000?${queryString.stringify({'allPlayers':JSON.stringify(allPlayersNames)})}`);
           }
         }
 
