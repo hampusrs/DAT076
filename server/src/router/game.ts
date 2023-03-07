@@ -7,7 +7,7 @@ const gameService = makeGameService();
 import queryString from "query-string";
 import dotenv from "dotenv";
 dotenv.config();
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const CLIENT_ID = process.env["CLIENT_ID"];
 const CLIENT_SECRET = process.env["CLIENT_SECRET"];
@@ -121,7 +121,8 @@ gameRouter.get("/callback", async (req, res) => {
       },
     });
 
-    if (authResponse.status === 200) { // access token has been granted from Spotify
+    if (authResponse.status === 200) {
+      // access token has been granted from Spotify
       const { access_token, token_type } = authResponse.data;
       // get user's info with access token
       const userInfoResponse = await axios.get(
@@ -145,7 +146,7 @@ gameRouter.get("/callback", async (req, res) => {
             },
           }
         );
-        
+
         // Sucessfully fetched user's top tracks from Spotify
         if (topTracksResponse.status === 200) {
           // The fetched data needed to add a player to game
@@ -177,21 +178,44 @@ gameRouter.get("/callback", async (req, res) => {
           });
 
           // add player to game
-          const addPlayerResponse : Player | undefined = await gameService.addPlayer(playerName, topSongs);
+          const addPlayerResponse: Player | undefined =
+            await gameService.addPlayer(playerName, topSongs);
           if (addPlayerResponse == null) {
-            res.status(400).send(`Player ${playerName} is already in the game`)
-          } else { // Player was added to game 
-            // only send the players' names (to avoid cheating)
-            const allPlayersNames : String[] = gameService.allPlayers.map((player) => player.name);
+            res.status(400).send(`Player ${playerName} is already in the game`);
+          } else {
+            // Player was added to game
+            // only send the players' names (to avoid revealing the player's top songs in the frontend)
+            const allPlayersNames: String[] = gameService.allPlayers.map(
+              (player) => player.name
+            );
             // redirect to frontend, and send all players in query
-            res.status(200).redirect(`http://localhost:3000?${queryString.stringify({'allPlayers':JSON.stringify(allPlayersNames)})}`);
+            res
+              .status(200)
+              .redirect(
+                `http://localhost:3000?${queryString.stringify({
+                  allPlayers: JSON.stringify(allPlayersNames),
+                })}`
+              );
           }
         }
-
       }
     }
-  } catch (error) {
-    res.send(error).status(500);
+  } catch (error: AxiosError | any) {
+    if (axios.isAxiosError(error)) {
+      if (!(error.response?.status == null)) {
+        if (error.response?.status === 403) { // Could be because user is not added in Spotify App dashboard 
+          res.status(error.response?.status).send(`Cannot fetch user data, expired access token or user has not allowed access`)
+        } else {
+          res
+          .status(error.response?.status)
+          .send(
+            `Axios error with status code ${error.response?.status}, ${error.response?.statusText}, Bad request to Spotify API`
+          );
+        }
+      } else {
+        res.send(error).status(500);
+      }
+    }
   }
 });
 
