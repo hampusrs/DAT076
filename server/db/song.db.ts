@@ -19,6 +19,10 @@ const songSchema : Schema = new Schema({
     artist: {
         type : String,
         required : true,
+    },
+    albumCoverURI: {
+        type: String,
+        required : true,
     }
 })
 
