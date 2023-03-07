@@ -9,7 +9,7 @@ interface IGameService {
   // returns all the players currently in the game.
   getPlayers(): Promise<Player[]>;
   // returns undefined is game is already started or there are no songs left.
-  startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined>; 
+  startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined>;
   // returns undefined if game is already started or there are no songs left.
   nextSong(): Promise<{ currentSong: Song, players: Player[] } | undefined>;
   // returns undefined if player already exist.
@@ -19,70 +19,119 @@ interface IGameService {
 }
 
 class GameService implements IGameService {
-  allPlayers: Player[] = [];
-  gameHasStarted: boolean = false;
+  // allPlayers: Player[] = [];
+  // gameHasStarted: boolean = false;
   currentSong: Song | undefined;
-  shuffledSongs: Song[] =  [];
+  // shuffledSongs: Song[] = [];
+  
+  //Creates a game in the database.
+  game = gameModel.create({
+    allPlayers: [],
+    gameHasStarted: false,
+    currentSong: undefined,
+    shuffledSongs: []
+  });
 
   //Gets all players
-  async getPlayers(): Promise<Player[]> {   //GetPlayer
-    return await playerModel.find();
+  async getPlayers(): Promise<Player[]> {
+    const players = playerModel.find().exec();
+    return players;
   }
 
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
     if (this.currentSong == null) {
-      await this.setupSongs();
-      let result = await gameModel.updateOne(
-        {currentSong: this.shuffledSongs.at(this.shuffledSongs.length - 1)}
-      )
-      if (this.currentSong == null) {
+
+      const shuffledSongs = await this.setupSongs();
+      const currentSong = shuffledSongs.at(shuffledSongs.length - 1);
+      this.currentSong = currentSong; //update this.currentSong so that the first if statement works? Potentially bad practice?
+      const allPlayers = this.getPlayers();
+
+      if (currentSong == null) {
         return undefined;
       }
-      result = await gameModel.updateOne(
-        {gameHasStarted: true},
-      )
-      // this.gameHasStarted = true;
-      return {currentSong : this.currentSong, players : await this.findPlayersWithSong(this.currentSong)};
+
+      const gameHasStarted = true;
+
+      const game = await this.getGame();
+
+      if(game == null) {
+        throw new Error(`Game is null :(`);
+      }
+
+      //gives game the correct values. 
+      game.set({
+        allPlayers: allPlayers,
+        gameHasStarted: gameHasStarted,
+        currentSong: currentSong,
+        shuffledSongs: shuffledSongs
+      })
+
+      //save the game to the database
+      await game.save(); 
+
+      return { currentSong: game.currentSong, players: await this.findPlayersWithSong(game.currentSong) };
     } else {
       return undefined;   //returns undefined if game is already started.
     }
   }
 
-  async addPlayer(username: string, topSongs : Song[]) {
-    return await playerModel.create({
-        name: username,
-        topSongs: topSongs
-    })
+  async getGame() {
+    //Since theres only one game and it isn't started yet i.e currentSong is undefined we can find the game like this.
+    return gameModel.findOne({currentSong : undefined}).exec(); 
   }
-  
-  private async setupSongs() : Promise<void> {
+  async addPlayer(username: string, topSongs: Song[]) {
+    // creates a new player p with the given username and topsongs and saves it to the db.
+    const p = await playerModel.create({
+      name: username,
+      topSongs: topSongs
+    })
+    return p;
+  }
+
+  private async setupSongs(): Promise<Song[]> {
     //Gets all the songs. 
     const uniqueSongs: Promise<Song[]> = this.findSongs();
     //Gets shuffled array of all songs.
-    this.shuffledSongs = await this.shuffleSongs(uniqueSongs);
+    return await this.shuffleSongs(uniqueSongs);
   }
 
   async isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }> {
-    if (this.currentSong == null) {
-      return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers };
+    const game = await this.getGame();
+    if(game == null) {
+      throw new Error(`Game is null`);
     }
-    return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
+    if (game.currentSong == null) {
+      return { gameHasStarted: game.gameHasStarted, currentPlayers: game.currentPlayers };
+    }
+    return { gameHasStarted: game.gameHasStarted, currentPlayers: game.allPlayers, currentSong: game.currentSong };
   }
 
   async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
-    if (this.currentSong == null) {
+    const game = await this.getGame();
+    if(game == null) {
+      throw new Error(`Game is null`);
+    }
+
+    if (game.currentSong == null) {
       return undefined;
     } else {
-      this.currentSong = this.shuffledSongs.pop();
-      if (this.currentSong == null) {
+      game.set({
+        currentSong : game.shuffledSongs.pop()
+      });
+      
+      if (game.currentSong == null) {
         return undefined;
       }
-      return {currentSong : this.currentSong , players : await this.findPlayersWithSong(this.currentSong)}
+      return { currentSong: game.currentSong, players: await this.findPlayersWithSong(game.currentSong) }
     }
   }
 
   async findSongs(): Promise<Song[]> {
-    const uniqueSongs: Set<Song> = new Set(this.allPlayers.flatMap(player => player.topSongs));
+    const game = await this.getGame();
+    if(game == null) {
+      throw new Error(`Game is null`);
+    }
+    const uniqueSongs: Set<Song> = new Set(game.allPlayers.flatMap((player: { topSongs: any; }) => player.topSongs)); // typescript vill att vi skriver {topSongs : any;} ??
     if (uniqueSongs.size == 0) {
       throw new Error(`The given players have no top songs.`);
     }
@@ -91,8 +140,12 @@ class GameService implements IGameService {
 
   // Returns all players that have the given song as one of their topsongs. 
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-    const playersWithSong : Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
-    if(playersWithSong.length == 0) {
+    const game = await this.getGame();
+    if(game == null) {
+      throw new Error(`Game is null`);
+    }
+    const playersWithSong: Player[] = game.allPlayers.filter((player: { topSongs: Song[]; }) => player.topSongs.includes(currentSong));
+    if (playersWithSong.length == 0) {
       throw new Error(`No player have this song as one of their top songs.`);
     }
     return playersWithSong;

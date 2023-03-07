@@ -14,4 +14,4 @@ const playerSchema : Schema = new Schema({
     }
 })
 
-export const playerModel = conn.model<Player>("Players", playerSchema);
+export const playerModel = conn.model<Player>("Player", playerSchema);

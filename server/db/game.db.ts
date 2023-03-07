@@ -1,6 +1,4 @@
 import {Schema, Model} from "mongoose";
-import { Player } from "../src/model/Player";
-import { Song } from "../src/model/Song";
 import { conn } from "./conn";
 import { playerModel } from "./player.db";
 import { songModel } from "./song.db";
@@ -16,13 +14,13 @@ const gameSchema : Schema = new Schema({
     },
     currentSong: {
         type: songModel,
-        required: false,
+        required: true,
     },
     shuffledSongs: {
         type: [songModel],
-        required: false,
+        required: true,
     }
 
 })
 
-export const gameModel = conn.model<any>("game", gameSchema);  //Har ingen aning om vad som ska vara inom <>!?!?! any låter kanske konstigt men vad annars?
+export const gameModel = conn.model("Game", gameSchema);  //con.model<????>
