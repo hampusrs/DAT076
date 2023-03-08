@@ -1,42 +1,52 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 
+
 interface IGameService {
+  // returns all the players currently in the game.
   getPlayers(): Promise<{ players: Player[] }>;
-  startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined>; // returns undefined is game is already started.
+  // returns undefined is game is already started or there are no songs left.
+  startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined>; 
+  // returns undefined if game is already started or there are no songs left.
   nextSong(): Promise<{ currentSong: Song, players: Player[] } | undefined>;
+  // returns undefined if player already exist.
+  addPlayer(username: string, topSongs: Song[]): Promise<Player | undefined>;
+  // returns object without currentSong if it is undefined.
+  isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }>;
 }
 
 class GameService implements IGameService {
   allPlayers: Player[] = [];
   gameHasStarted: boolean = false;
   currentSong: Song | undefined;
-  index: number = 0;           //TABORT
   shuffledSongs: Song[] =  [];
 
-  async getPlayers(): Promise<{ players: Player[] }> {   //GetPlayer
+  //Gets all players
+  async getPlayers(): Promise<{ players: Player[] }> {
     return { players: this.allPlayers };
   }
 
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
-    console.log(this.currentSong);
     if (this.currentSong == null) {
-      this.gameHasStarted = true;
       await this.setupSongs();
-      console.log(this.shuffledSongs);
-      return this.randomizeNewCurrentSong();
+      this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1); //Pick first song in shuffledSongs.
+      if (this.currentSong == null) {
+        return undefined;
+      }
+      this.gameHasStarted = true;
+      return {currentSong : this.currentSong, players : await this.findPlayersWithSong(this.currentSong)}
     } else {
       return undefined;   //returns undefined if game is already started.
     }
   }
 
-
   async addPlayer(username: string, topSongs : Song[]) {
     const p: Player = { name: username, topSongs: topSongs };
     if (this.allPlayers.filter((player => player.name == username)).length > 0) {
-      throw new Error(`Player with username: ${username} already exists`);
+      return undefined;
     }
     this.allPlayers.push(p);
+    return p;
   }
   
   private async setupSongs() : Promise<void> {
@@ -55,20 +65,31 @@ class GameService implements IGameService {
 
   async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
     if (this.currentSong == null) {
-      throw new Error(`Game has not started yet`);
+      return undefined;
     } else {
-      return this.randomizeNewCurrentSong();
+      this.currentSong = this.shuffledSongs.pop();
+      if (this.currentSong == null) {
+        return undefined;
+      }
+      return {currentSong : this.currentSong , players : await this.findPlayersWithSong(this.currentSong)}
     }
   }
 
   async findSongs(): Promise<Song[]> {
     const uniqueSongs: Set<Song> = new Set(this.allPlayers.flatMap(player => player.topSongs));
+    if (uniqueSongs.size == 0) {
+      throw new Error(`The given players have no top songs.`);
+    }
     return Array.from(uniqueSongs);
   }
 
   // Returns all players that have the given song as one of their topsongs. 
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-    return this.allPlayers.filter(player => player.topSongs.includes(currentSong));
+    const playersWithSong : Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
+    if(playersWithSong.length == 0) {
+      throw new Error(`No player have this song as one of their top songs.`);
+    }
+    return playersWithSong;
   }
 
   // Shuffles the given Song array.
@@ -86,41 +107,8 @@ class GameService implements IGameService {
     const shuffledSongs = shuffle(await uniqueSongs);
     return shuffledSongs;
   }
-
-  // Should update the global index variable
-  private async getNextIndex(): Promise<void> {
-    // If the index will still be in range after being increased by one
-    // Increse it by one, else set it to zero.
-    if (this.index + 1 < (await this.findSongs()).length) {
-      this.index++;
-    } else {
-      this.index = 0;
-    }
-  }
-
-  private async randomizeNewCurrentSong(): Promise<{ currentSong: Song, players: Player[] }> {
-    //Updates index.
-    this.getNextIndex();
-    //Gets the new song that will be the next currentSong.
-    let newSong: Song | undefined = (await this.shuffledSongs)[this.index];
-    if (newSong == null) {
-      throw new Error(`No song with index ${this.index}`);
-    }
-    //Finds all players with that song in their topsongs.
-    const playersWithSong: Promise<Player[]> = this.findPlayersWithSong(newSong);
-    //Updates currentSong
-    this.currentSong = newSong;
-    return { currentSong: this.currentSong, players: (await playersWithSong) }
-  }
 }
 
 export function makeGameService() {
   return new GameService();
 }
-
-/* 
-TODO:
-- display currentPlayers
-- continuisly check if game has stareted and updates player if anyone has joined
-- a button that starts the game
-*/
