@@ -189,13 +189,11 @@ gameRouter.get("/callback", async (req, res) => {
               (player) => player.name
             );
             // redirect to frontend, and send all players in query
-            res
-              .status(200)
-              .redirect(
-                `http://localhost:3000?${queryString.stringify({
-                  allPlayers: JSON.stringify(allPlayersNames),
-                })}`
-              );
+            res.status(200).redirect(
+              `http://localhost:3000?${queryString.stringify({
+                allPlayers: JSON.stringify(allPlayersNames),
+              })}`
+            );
           }
         }
       }
@@ -203,14 +201,19 @@ gameRouter.get("/callback", async (req, res) => {
   } catch (error: AxiosError | any) {
     if (axios.isAxiosError(error)) {
       if (!(error.response?.status == null)) {
-        if (error.response?.status === 403) { // Could be because user is not added in Spotify App dashboard 
-          res.status(error.response?.status).send(`Cannot fetch user data, expired access token or user has not allowed access`)
+        if (error.response?.status === 403) {
+          // Could be because user is not added in Spotify App dashboard
+          res
+            .status(error.response?.status)
+            .send(
+              `Cannot fetch user data, expired access token or user has not allowed access`
+            );
         } else {
           res
-          .status(error.response?.status)
-          .send(
-            `Axios error with status code ${error.response?.status}, ${error.response?.statusText}, Bad request to Spotify API`
-          );
+            .status(error.response?.status)
+            .send(
+              `Axios error with status code ${error.response?.status}, ${error.response?.statusText}, Bad request to Spotify API`
+            );
         }
       } else {
         res.send(error).status(500);
