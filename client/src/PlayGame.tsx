@@ -44,7 +44,7 @@ export function PlayGame() {
 
     useEffect(() => {
         startGame();
-    })
+    }, [])
 
     async function startGame() {
         if (!startedGame.current) {
@@ -55,8 +55,10 @@ export function PlayGame() {
             }>("http://localhost:8080/game", {action: 'StartGame'});
             setCurrentSong(response.data.currentSong);
             setCurrentPlayers(response.data.players);
+            console.log(currentSong?.albumCoverPath);
         } else {
-            nextSong();
+            console.log('fel');
+            //nextSong();
         }
     }
 
