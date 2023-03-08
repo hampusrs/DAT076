@@ -10,7 +10,7 @@ export interface Song {
     title: string;
     album: string;
     artist: string;
-    albumCoverPath: string;
+    albumCoverURI: string;
 }
 
 export interface Player {
@@ -55,10 +55,8 @@ export function PlayGame() {
             }>("http://localhost:8080/game", {action: 'StartGame'});
             setCurrentSong(response.data.currentSong);
             setCurrentPlayers(response.data.players);
-            console.log(currentSong?.albumCoverPath);
         } else {
-            console.log('fel');
-            //nextSong();
+            nextSong();
         }
     }
 
@@ -72,8 +70,6 @@ export function PlayGame() {
         setCurrentSong(response.data.currentSong);
         setCurrentPlayers(response.data.players);
     }
-
-    let imagePath: string = "./images/" + currentSong?.title + ".jpg"
 
 // Creates a PlayerView component for given player.
     function displayPlayer(player: Player) {
@@ -104,13 +100,13 @@ export function PlayGame() {
                 {(currentSong == null)
                     ? <p>No Game Right Now</p>
                     : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album}
-                                albumCoverPath={currentSong.albumCoverPath}/>}
+                                albumCoverPath={currentSong.albumCoverURI}/>}
             </div>
             <div className='RevealItem'>
                 <label className='Question'> Who's top song is this? </label>
                 <RevealPlayersCard players={currentPlayers?.map(getPlayerName)}/>
             </div>
-            <button className="NextSongBtn GreenButton" onClick={nextSong}>Next Song</button>
+            <button className="NextSongBtn GreenButton" onClick={() => {console.log('albumPath: ' + currentSong?.albumCoverURI); console.log(currentSong)}}>Next Song</button>
             <div className="showAllPlayersDiv">
                 <button className="showPlayersButton GreenButton" onClick={showPlayerButtonAction}>Show all players</button>
                 <div className="playersList">

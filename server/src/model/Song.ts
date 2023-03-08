@@ -3,5 +3,5 @@ export interface Song {
     title: string;
     album: string;
     artist: string;
-    albumCoverURI? : string;
+    albumCoverURI : string;
 }

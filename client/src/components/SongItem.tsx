@@ -14,7 +14,7 @@ export function SongItem({
 }: SongItemProps) {
   return (
     <section className="DisplaySong">
-      <img className="AlbumCover" src={`"${albumCoverPath}"`} alt={album} />
+      <img className="AlbumCover" src={albumCoverPath} alt={album} onError={() => console.log('Error loading image')} />
       <ul className="SongInfo">
         <li className="SongTitle"> {title} </li>
         <li className="ArtistName"> {artist} </li>
