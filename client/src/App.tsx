@@ -1,6 +1,7 @@
 import {useState} from 'react';
 import {PreGame} from './PreGame'
 import PlayGame from './PlayGame';
+import Login from "./Login";
 
 export interface Song {
     title: string;
@@ -22,18 +23,22 @@ enum Page {
 
 export function App() {
 
-    const [page, setPage] = useState<Page>(Page.PREGAME);
+    const [page, setPage] = useState<Page>(Page.LOGIN);
 
-    switch(page) {
+    switch (page) {
         case Page.PREGAME:
             return <PreGame goToGamePage={() => {
                 setPage(Page.PLAYGAME);
             }}/>
         case Page.PLAYGAME:
             return <PlayGame/>
-        default: 
-            return <PreGame goToGamePage={() => {
-                setPage(Page.PLAYGAME);
+        case Page.LOGIN:
+            return <Login goToPreGamePage={() => {
+                setPage(Page.PREGAME);
+            }}/>
+        default:
+            return <Login goToPreGamePage={() => {
+                setPage(Page.PREGAME);
             }}/>
     }
 }

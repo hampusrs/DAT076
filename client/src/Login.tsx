@@ -1,33 +1,33 @@
 import React, {useEffect, useState, useRef} from 'react';
 import './Login.css';
-import App from "./currentPlayers";
+//import PreGame from "./PreGame";
 import {accessToken} from './spotify';
 import {Routes, Route, Link} from 'react-router-dom';
 
-export function Login() {
+export function Login(props: {
+    goToPreGamePage: () => void
+}) {
     const [token, setToken] = useState<string>('');
 
     useEffect(() => {
         setToken(accessToken);
     }, []);
 
+    if (!(token == '')) {
+        props.goToPreGamePage();
+    }
+
     async function loginWithSpotify() {
         window.location.href = "http://localhost:8080/login";
     }
 
-    if (token == '') {
-        return (
-            <div className="Login center">
-                <header className="App-header">
-                    <button className="login-button" onClick={loginWithSpotify}>Log in</button>
-                </header>
-            </div>
-        );
-    } else {
-        return (
-            <App/>
-        );
-    }
+    return (
+        <div className="Login center">
+            <header className="App-header">
+                <button className="login-button" onClick={loginWithSpotify}>Log in</button>
+            </header>
+        </div>
+    );
 
     /**
      return (
