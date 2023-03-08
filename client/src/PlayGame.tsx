@@ -101,7 +101,7 @@ export function PlayGame() {
                 {(currentSong == null)
                     ? <p>No Game Right Now</p>
                     : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album}
-                                albumCoverPath={currentSong.albumCoverURI}/>}
+                                albumCoverURI={currentSong.albumCoverURI}/>}
             </div>
             <div className='RevealItem'>
                 <label className='Question'> Who's top song is this? </label>
