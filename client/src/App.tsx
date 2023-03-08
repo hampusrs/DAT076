@@ -19,7 +19,7 @@ enum Page {
     LOGIN,
     PREGAME,
     PLAYGAME
-};
+}
 
 export function App() {
 

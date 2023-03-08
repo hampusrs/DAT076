@@ -1,12 +1,23 @@
 import axios from 'axios';
 
 // Map for localStorage keys
+/**
 const LOCALSTORAGE_KEYS = {
     accessToken: 'spotify_access_token',
     refreshToken: 'spotify_refresh_token',
     expireTime: 'spotify_token_expire_time',
     timestamp: 'spotify_token_timestamp',
 }
+*/
+
+
+const LOCALSTORAGE_KEYS: {[key: string]: string} = {
+accessToken: 'spotify_access_token',
+refreshToken: 'spotify_refresh_token',
+expireTime: 'spotify_token_expire_time',
+timestamp: 'spotify_token_timestamp',
+};
+
 
 // Map to retrieve localStorage values
 const LOCALSTORAGE_VALUES = {
@@ -22,6 +33,7 @@ const LOCALSTORAGE_VALUES = {
 * @returns {string} A Spotify access token
 */
 const getAccessToken = (): string => {
+    logout();
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const queryParams: {[key: string]: string | null} = {
@@ -109,16 +121,16 @@ const refreshToken = async (): Promise<void> => {
 * Clear out all localStorage items we've set and reload the page
 * @returns {void}
 */
-/**
+
 export const logout = (): void => {
     // Clear all localStorage items
     for (const property in LOCALSTORAGE_KEYS) {
         window.localStorage.removeItem(LOCALSTORAGE_KEYS[property]);
     }
     // Navigate to homepage
-    window.location.href = window.location.origin;
+    //window.location.href = window.location.origin;
 };
-*/
+
 
 export const accessToken: string = getAccessToken();
 
