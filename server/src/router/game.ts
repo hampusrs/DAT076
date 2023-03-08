@@ -164,6 +164,8 @@ gameRouter.get("/callback", async (req, res) => {
             playerName = `${display_name} (${username})`;
           }
 
+          console.log(tracks)
+
           // top songs
           const topSongs: Song[] = [];
           tracks.items.map((track: any) => {
@@ -172,7 +174,7 @@ gameRouter.get("/callback", async (req, res) => {
               title: track.name,
               album: track.album.name,
               artist: track.artists[0].name,
-              albumCoverURI: track.album.images[1],
+              albumCoverURI: track.album.images[1].url
             };
             topSongs.push(song);
           });

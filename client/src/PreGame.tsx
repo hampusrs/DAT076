@@ -1,12 +1,14 @@
 import React, { useEffect, useState, useRef } from "react";
-import "./currentPlayers.css";
+import "./PreGame.css";
 import "./components/PlayersView";
 import PlayersView from "./components/PlayersView";
 import { Player } from "./App";
 import axios from "axios";
 
 
-  export function App() {
+  export function PreGame(props : {
+    goToGamePage : () => void
+  }) {
     const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     const [status, setStatus] = useState<boolean>(false);
   
@@ -41,6 +43,7 @@ import axios from "axios";
       return <PlayersView pName={player.name}> </PlayersView>;
     }
   
+    
     return (
       <div className="CurrentPlayers">
         <div className="PlayerTable">
@@ -48,11 +51,15 @@ import axios from "axios";
             {status ? null : players?.map(displayPlayer)}
           </div>
         </div>
-        <button className="StartGameBtn">
+        <button className="StartGameBtn" onClick={e => {
+          e.preventDefault();
+          props.goToGamePage()
+;
+        }}>
           <label className="Label">Start Game</label>
         </button>
       </div>
     );
   }
   
-  export default App;
+  export default PreGame;
