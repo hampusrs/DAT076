@@ -164,8 +164,6 @@ gameRouter.get("/callback", async (req, res) => {
             playerName = `${display_name} (${username})`;
           }
 
-          console.log(tracks)
-
           // top songs
           const topSongs: Song[] = [];
           tracks.items.map((track: any) => {
@@ -190,27 +188,16 @@ gameRouter.get("/callback", async (req, res) => {
         expires_in,
       });
 
-      res.redirect(`http://localhost:3000/?${queryParams}`);
+      res.status(200).redirect(`http://localhost:3000/?${queryParams}`);
     }
   } catch (error: AxiosError | any) {
-    if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError(error)) { // caused by requests send to SpotifyAPI
       if (!(error.response?.status == null)) {
-        if (error.response?.status === 403) {
-          // Could be because user is not added in Spotify App dashboard
-          res
-            .status(error.response?.status)
-            .send(
-              `Cannot fetch user data, expired access token or user has not allowed access`
-            );
-        } else {
-          res
-            .status(error.response?.status)
-            .send(
-              `Axios error with status code ${error.response?.status}, ${error.response?.statusText}, Bad request to Spotify API`
-            );
-        }
+        res
+          .status(error.response?.status)
+          .redirect('http://localhost:3000');
       } else {
-        res.send(error).status(500);
+        res.status(500).redirect('http://localhost:3000');
       }
     }
   }
