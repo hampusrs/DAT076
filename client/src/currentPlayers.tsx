@@ -20,6 +20,7 @@ import axios from "axios";
         gameHasStarted: boolean;
         currentPlayers: Player[];
       }>("http://localhost:8080/game/started");
+      console.log(response.data.currentPlayers)
       setPlayers(response.data.currentPlayers);
       setStatus(response.data.gameHasStarted);
     }

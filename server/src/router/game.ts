@@ -102,6 +102,7 @@ gameRouter.get("/login", (_, res) => {
 
 // TODO: Better response handling
 gameRouter.get("/callback", async (req, res) => {
+  console.log(req);
   const code = req.query["code"] || null;
 
   try {
@@ -122,8 +123,10 @@ gameRouter.get("/callback", async (req, res) => {
     });
 
     if (authResponse.status === 200) {
-      // access token has been granted from Spotify
-      const { access_token, token_type } = authResponse.data;
+      // access token has been granted
+      const { access_token, refresh_token, expires_in, token_type } =
+        authResponse.data;
+
       // get user's info with access token
       const userInfoResponse = await axios.get(
         "https://api.spotify.com/v1/me",
@@ -133,9 +136,7 @@ gameRouter.get("/callback", async (req, res) => {
           },
         }
       );
-      // 200, 400, 401 (bad/expired token), 403 (bad oAuth req), 429 (exceeded # of requests)
 
-      // sucessfully fetched user info from Spotify
       if (userInfoResponse.status === 200) {
         // get user's top tracks with access token
         const topTracksResponse = await axios.get(
@@ -147,7 +148,6 @@ gameRouter.get("/callback", async (req, res) => {
           }
         );
 
-        // Sucessfully fetched user's top tracks from Spotify
         if (topTracksResponse.status === 200) {
           // The fetched data needed to add a player to game
           const userinfo = userInfoResponse.data;
@@ -178,25 +178,17 @@ gameRouter.get("/callback", async (req, res) => {
           });
 
           // add player to game
-          const addPlayerResponse: Player | undefined =
-            await gameService.addPlayer(playerName, topSongs);
-          if (addPlayerResponse == null) {
-            res.status(400).send(`Player ${playerName} is already in the game`);
-          } else {
-            // Player was added to game
-            // only send the players' names (to avoid revealing the player's top songs in the frontend)
-            const allPlayersNames: String[] = gameService.allPlayers.map(
-              (player) => player.name
-            );
-            // redirect to frontend, and send all players in query
-            res.status(200).redirect(
-              `http://localhost:3000?${queryString.stringify({
-                allPlayers: JSON.stringify(allPlayersNames),
-              })}`
-            );
-          }
+          await gameService.addPlayer(playerName, topSongs);
         }
       }
+
+      const queryParams = queryString.stringify({
+        access_token,
+        refresh_token,
+        expires_in,
+      });
+
+      res.redirect(`http://localhost:3000/?${queryParams}`);
     }
   } catch (error: AxiosError | any) {
     if (axios.isAxiosError(error)) {
