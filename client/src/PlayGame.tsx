@@ -73,7 +73,6 @@ export function PlayGame() {
         setCurrentPlayers(response.data.players);
     }
 
-    let imagePath: string = "./images/" + currentSong?.title + ".jpg"
 
 // Creates a PlayerView component for given player.
     function displayPlayer(player: Player) {
