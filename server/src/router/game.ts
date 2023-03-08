@@ -1,13 +1,13 @@
 import express, { Request, Response } from "express";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
-import {makeGameService } from "../service/game";
+import { makeGameService } from "../service/game";
 export const gameRouter = express.Router();
 const gameService = makeGameService();
 import queryString from "query-string";
 import dotenv from "dotenv";
 dotenv.config();
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 
 const CLIENT_ID = process.env["CLIENT_ID"];
 const CLIENT_SECRET = process.env["CLIENT_SECRET"];
@@ -26,15 +26,27 @@ interface GameActionRequest extends Request {
   body: { action: string };
 }
 
-gameRouter.get("/game/started", async (_, res: Response<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song}>) => {
-  try{
-    res.status(200).send(await gameService.isAlreadyStarted());
-  }catch (e: any){
-    console.error(e.stack);
-    res.status(400).send(e.message);
+// Checks if game has already started
+gameRouter.get(
+  "/game/started",
+  async (
+    _,
+    res: Response<{
+      gameHasStarted: boolean;
+      currentPlayers: Player[];
+      currentSong?: Song;
+    }>
+  ) => {
+    try {
+      res.status(200).send(await gameService.isAlreadyStarted());
+    } catch (e: any) {
+      console.error(e.stack);
+      res.status(500).send(e.message);
+    }
   }
-});
+);
 
+// Request needs to contain body with 'action'.
 gameRouter.post(
   "/game",
   async (
@@ -44,17 +56,28 @@ gameRouter.post(
     try {
       const action: string = req.body.action;
       if (action == "StartGame") {
-        const startGameResponse : { currentSong: Song, players: Player[] } | undefined = await gameService.startGame()
-        if(startGameResponse == null) {
-          res.status(400).send(`Game has already been started`);
+        const startGameResponse:
+          | { currentSong: Song; players: Player[] }
+          | undefined = await gameService.startGame();
+        if (startGameResponse == null) {
+          res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
         }
         res.status(200).send(startGameResponse);
       } else if (action == "NextSong") {
-        res.status(200).send(await gameService.nextSong());
+        const nextSongResponse:
+          | { currentSong: Song; players: Player[] }
+          | undefined = await gameService.nextSong();
+        if (nextSongResponse == null) {
+          res
+            .status(400)
+            .send("Game has not started yet or no songs left in queue"); // TODO: Separate the two cases
+        }
+        res.status(200).send(nextSongResponse);
       } else {
-        res.status(400).send(`The action ${action} is not defined`);
+        res.status(400).send(`The action '${action}' is not defined`);
       }
     } catch (e: any) {
+      // Catches possible errors from GameService
       console.error(e.stack);
       res.status(500).send(e.message);
     }
@@ -99,61 +122,103 @@ gameRouter.get("/callback", async (req, res) => {
     });
 
     if (authResponse.status === 200) {
-      // access token has been granted
+      // access token has been granted from Spotify
       const { access_token, token_type } = authResponse.data;
-
-      // Get user's info
-      const userInfoResponse = await axios.get("https://api.spotify.com/v1/me", {
-        headers: {
-          Authorization: `${token_type} ${access_token}`,
-        },
-      });
-      // 401 (bad/expired token), 403 (bad oAuth req), 429
-
-      // Get user's top tracks
-      const topTracksResponse = await axios.get(
-        "https://api.spotify.com/v1/me/top/tracks?limit=20",
+      // get user's info with access token
+      const userInfoResponse = await axios.get(
+        "https://api.spotify.com/v1/me",
         {
           headers: {
             Authorization: `${token_type} ${access_token}`,
           },
         }
       );
+      // 200, 400, 401 (bad/expired token), 403 (bad oAuth req), 429 (exceeded # of requests)
 
-      // The fetched data needed to create a player object
-      const userinfo = userInfoResponse.data;
-      const tracks = topTracksResponse.data;
+      // sucessfully fetched user info from Spotify
+      if (userInfoResponse.status === 200) {
+        // get user's top tracks with access token
+        const topTracksResponse = await axios.get(
+          "https://api.spotify.com/v1/me/top/tracks?limit=20",
+          {
+            headers: {
+              Authorization: `${token_type} ${access_token}`,
+            },
+          }
+        );
 
-      // Get the revelant data from the responses
-      // user name
-      const username : string = userinfo.id;
-      const display_name : string = userinfo.display_name;
-      let playerName : string;
-      if (display_name == null) { // if display name is not found
-        playerName = username;   // set player's name to only username
-      } else {
-        playerName = `${display_name} (${username})`;
+        // Sucessfully fetched user's top tracks from Spotify
+        if (topTracksResponse.status === 200) {
+          // The fetched data needed to add a player to game
+          const userinfo = userInfoResponse.data;
+          const tracks = topTracksResponse.data;
+
+          // user name
+          const username: string = userinfo.id;
+          const display_name: string = userinfo.display_name;
+          let playerName: string;
+          if (display_name == null) {
+            // if display name is not found
+            playerName = username; // set player's name to only username
+          } else {
+            playerName = `${display_name} (${username})`;
+          }
+
+          // top songs
+          const topSongs: Song[] = [];
+          tracks.items.map((track: any) => {
+            const song: Song = {
+              id: track.id,
+              title: track.name,
+              album: track.album.name,
+              artist: track.artists[0].name,
+              albumCoverURI: track.album.images[1],
+            };
+            topSongs.push(song);
+          });
+
+          // add player to game
+          const addPlayerResponse: Player | undefined =
+            await gameService.addPlayer(playerName, topSongs);
+          if (addPlayerResponse == null) {
+            res.status(400).send(`Player ${playerName} is already in the game`);
+          } else {
+            // Player was added to game
+            // only send the players' names (to avoid revealing the player's top songs in the frontend)
+            const allPlayersNames: String[] = gameService.allPlayers.map(
+              (player) => player.name
+            );
+            // redirect to frontend, and send all players in query
+            res.status(200).redirect(
+              `http://localhost:3000?${queryString.stringify({
+                allPlayers: JSON.stringify(allPlayersNames),
+              })}`
+            );
+          }
+        }
       }
-
-      // top songs
-      const topSongs: Song[] = [];
-      tracks.items.map((track: any) => {
-        //const albumCover : string = track.album.images[0];
-        const song: Song = {
-          id: track.id,
-          title: track.name,
-          album: track.album.name,
-          artist: track.artists[0].name,
-          albumCoverURI: track.album.images[1]
-        };
-        topSongs.push(song);
-      });
-
-      gameService.addPlayer(playerName, topSongs);
-      res.send(gameService.allPlayers).status(200);
     }
-  } catch (error) {
-    res.send(error);
+  } catch (error: AxiosError | any) {
+    if (axios.isAxiosError(error)) {
+      if (!(error.response?.status == null)) {
+        if (error.response?.status === 403) {
+          // Could be because user is not added in Spotify App dashboard
+          res
+            .status(error.response?.status)
+            .send(
+              `Cannot fetch user data, expired access token or user has not allowed access`
+            );
+        } else {
+          res
+            .status(error.response?.status)
+            .send(
+              `Axios error with status code ${error.response?.status}, ${error.response?.statusText}, Bad request to Spotify API`
+            );
+        }
+      } else {
+        res.send(error).status(500);
+      }
+    }
   }
 });
 

@@ -1,7 +1,6 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
 
-//const gameID: number = 123;
 
 interface IGameService {
   // returns all the players currently in the game.
