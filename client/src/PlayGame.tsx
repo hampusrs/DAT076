@@ -71,6 +71,7 @@ export function PlayGame() {
         setCurrentPlayers(response.data.players);
     }
 
+
 // Creates a PlayerView component for given player.
     function displayPlayer(player: Player) {
         return <PlayersView pName={player.name}> </PlayersView>
