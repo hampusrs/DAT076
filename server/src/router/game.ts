@@ -56,9 +56,7 @@ gameRouter.post(
     try {
       const action: string = req.body.action;
       if (action == "StartGame") {
-        const startGameResponse:
-          | { currentSong: Song; players: Player[] }
-          | undefined = await gameService.startGame();
+        const startGameResponse: { currentSong: Song; players: Player[] } | undefined = await gameService.startGame();
         if (startGameResponse == null) {
           res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
         }

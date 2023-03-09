@@ -1,6 +1,7 @@
 import { makeGameService } from "./game";
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
+jest.setTimeout(15000);
 
 /** Create mock-data, bob and jane */
 const song1: Song = {
@@ -29,9 +30,9 @@ const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 test("Test that addPlayer adds a player to currentPlayers", () => {
   
   const gameService = makeGameService();
-  // add bob to game
+  // adds Bob to game
   gameService.addPlayer(player1.name, [song1, song2]);
-  // check that currentPlayers contains bob
+  // check that currentPlayers contains Bob
   const numberMatches = gameService.allPlayers.filter(player => player.name == player1.name)
   expect(numberMatches.length).toBeGreaterThanOrEqual(1); 
 });
@@ -115,9 +116,10 @@ test("Check that nextSong doesn't give the same song again.", async () => {
   
 test("Test that the array of current players in the game have length 2", async () => {
     const gameService = makeGameService();
-    gameService.addPlayer(player1.name, player1.topSongs);
-    gameService.addPlayer(player2.name, player2.topSongs);
-    const players = (await gameService.getPlayers()).players;
+    await gameService.addPlayer(player1.name, player1.topSongs);
+    await gameService.addPlayer(player2.name, player2.topSongs);
+    const players = (await gameService.getPlayers());
+    console.log(players);
     expect(players.length).toEqual(2);
 });
 

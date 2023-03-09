@@ -1,4 +1,4 @@
-import {Schema, Model} from "mongoose";
+import {Schema} from "mongoose";
 import { Player } from "../src/model/Player";
 import { Song } from "../src/model/Song";
 import { conn } from "./conn";

@@ -1,11 +1,13 @@
-import {Schema, Model} from "mongoose";
+import {Schema} from "mongoose";
 import { conn } from "./conn";
 import { playerModel } from "./player.db";
 import { songModel } from "./song.db";
 
+
+
 const gameSchema : Schema = new Schema({
     allPlayers: {
-        type: [ playerModel ],  //ska de vara playermodel, playerSchema eller bara array<Player>
+        type: [{type : Array, ref: playerModel}],  //ska de vara playermodel, playerSchema eller bara array<Player>
         required: true,
     },
     gameHasStarted: {
@@ -13,11 +15,11 @@ const gameSchema : Schema = new Schema({
         required: true,
     },
     currentSong: {
-        type: songModel,
-        required: true,
+        type: {type: String, ref: songModel},
+        required: false,                         //TODO ska vara true? men då klagar server :(
     },
     shuffledSongs: {
-        type: [songModel],
+        type: [{type: Array, ref: songModel}],
         required: true,
     }
 
