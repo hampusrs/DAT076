@@ -6,14 +6,14 @@ import RevealPlayersCard from "./components/RevealPlayersCard"
 import axios from 'axios';
 
 
-export interface Song {
+interface Song {
     title: string;
     album: string;
     artist: string;
     albumCoverURI: string;
 }
 
-export interface Player {
+interface Player {
     name: string;
     topSongs: Song[];
 }

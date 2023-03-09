@@ -26,6 +26,7 @@ class GameService implements IGameService {
   }
 
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
+    
     if (this.currentSong == null) {
       await this.setupSongs();
       this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1); //Pick first song in shuffledSongs.
