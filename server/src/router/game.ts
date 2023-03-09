@@ -44,25 +44,25 @@ gameRouter.get(
       res.status(500).send(e.message);
     }
   }
-);
-
-// Request needs to contain body with 'action'.
-gameRouter.post(
-  "/game",
-  async (
-    req: GameActionRequest,
-    res: Response<string | { currentSong: Song; players: Player[] }>
-  ) => {
-    try {
-      const action: string = req.body.action;
-      if (action == "StartGame") {
-        const startGameResponse:
-          | { currentSong: Song; players: Player[] }
-          | undefined = await gameService.startGame();
-        if (startGameResponse == null) {
-          res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
-        }
-        res.status(200).send(startGameResponse);
+  );
+  
+  // Request needs to contain body with 'action'.
+  gameRouter.post(
+    "/game",
+    async (
+      req: GameActionRequest,
+      res: Response<string | { currentSong: Song; players: Player[] }>
+      ) => {
+        try {
+          const action: string = req.body.action;
+          if (action == "StartGame") {
+            const startGameResponse: 
+            | { currentSong: Song; players: Player[] } 
+            | undefined = await gameService.startGame();
+            if (startGameResponse == null) {
+              res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
+            } 
+            res.status(200).send(startGameResponse);
       } else if (action == "NextSong") {
         const nextSongResponse:
           | { currentSong: Song; players: Player[] }

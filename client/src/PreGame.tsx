@@ -11,7 +11,7 @@ import axios from "axios";
     goToGamePage : () => void
   }) {
     const [players, setPlayers] = useState<Player[] | undefined>(undefined);
-    const [status, setStatus] = useState<boolean>(false);
+    //const [status, setStatus] = useState<boolean>(false);
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false)
     /**
      * Gets all players that are currently playing the game.
@@ -26,7 +26,7 @@ import axios from "axios";
       }>("http://localhost:8080/game/started");
       setPlayers(response.data.currentPlayers);
       //setCurrentSong(response.data.currentSong);
-      setStatus(response.data.gameHasStarted);
+      setGameHasStarted(response.data.gameHasStarted);
      }
   
     // Call getAllPlayers() every second
@@ -34,17 +34,18 @@ import axios from "axios";
       const intervalId = setInterval(() => {
         void (async () => {
           await getGameStatus();
-
-          console.log(gameHasStarted);
-
-          if (gameHasStarted) {
-            props.goToGamePage();
-          }
         })();
       }, 1000);
-  
+    
       return () => clearInterval(intervalId);
     }, []);
+    
+    useEffect(() => {
+      if (gameHasStarted) {
+        props.goToGamePage();
+      }
+    }, [gameHasStarted]);
+    
   
     // Creates a PlayerView component for given player.
     function displayPlayer(player: Player) {
@@ -56,13 +57,12 @@ import axios from "axios";
       <div className="CurrentPlayers">
         <div className="PlayerTable">
           <div className="Content">
-            {status ? null : players?.map(displayPlayer)}
+            {gameHasStarted ? null : players?.map(displayPlayer)}
           </div>
         </div>
         <button className="StartGameBtn" onClick={e => {
           e.preventDefault();
-          props.goToGamePage()
-;
+          props.goToGamePage();
         }}>
           <label className="Label">Start Game</label>
         </button>
