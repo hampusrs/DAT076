@@ -1,17 +1,21 @@
 .PlayGame {
-  width: 90vw;
-  height: 90vh;
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
 }
 
 .SongItem {
   display: flex;
   flex-direction: column;
+  color: white;
 }
 
 .RevealItem {
   display: flex;
   flex-direction: column;
   align-items: center;
+  color: white;
+  font-family: sans-serif;
 }
 
 .DisplaySong {
@@ -20,7 +24,7 @@
   margin: 10vh;
   align-items: center;
   gap: 30px;
-  padding-left: 15vw;
+  padding-left: 24vw;
 }
 
 .AlbumCover {
@@ -30,7 +34,7 @@
 
 .SongInfo {
   height: fit-content;
-  width: 30vw;
+  width: 50vw;
   list-style-type: none;
 }
 
@@ -51,6 +55,7 @@
   margin-right: 35vw;
   text-align: center;
   font-size: 4vh;
+  margin-bottom: 5vh;
 }
 
 .NextSongBtn {
@@ -66,6 +71,10 @@
   border-color: transparent;
   font-weight: bold;
   border-radius: 15px;
+  width: fit-content;
+  height: fit-content;
+  padding: 1vh;
+
 }
 
 .GreenButton:hover {
@@ -75,7 +84,7 @@
 .showAllPlayersDiv {
   display: grid;
   position: absolute;
-  right: 10vh;
+  margin-left: 5vw;
   top: 5vw;
 }
 
@@ -85,6 +94,7 @@
   position: absolute;
   top: 5vh;
   align-items: center;
+  color: white;
 }
 
 .playerView {
@@ -94,6 +104,8 @@
 
 .showPlayersButton {
   font-size: 1.2vw;
+  color: white;
+
 }
 
 /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
