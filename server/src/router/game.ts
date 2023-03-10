@@ -4,7 +4,6 @@ import { Player } from "../model/Player";
 import { makeGameService } from "../service/game";
 export const gameRouter = express.Router();
 const gameService = makeGameService();
-//import queryString from "query-string";
 import dotenv from "dotenv";
 dotenv.config();
 import axios, { AxiosError } from "axios";
