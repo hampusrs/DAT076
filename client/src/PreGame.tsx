@@ -28,23 +28,23 @@ import axios from "axios";
       //setCurrentSong(response.data.currentSong);
       setGameHasStarted(response.data.gameHasStarted);
      }
-  
-    // Call getAllPlayers() every second
-    useEffect(() => {
-      const intervalId = setInterval(() => {
-        void (async () => {
-          await getGameStatus();
-        })();
-      }, 1000);
-    
-      return () => clearInterval(intervalId);
-    }, []);
-    
-    useEffect(() => {
-      if (gameHasStarted) {
-        props.goToGamePage();
-      }
-    }, [gameHasStarted]);
+
+      // Call getAllPlayers() every second
+      useEffect(() => {
+          const intervalId = setInterval(() => {
+              void (async () => {
+                  await getGameStatus();
+              })();
+          }, 1000);
+
+          return () => clearInterval(intervalId);
+      }, []);
+
+      useEffect(() => {
+          if (gameHasStarted) {
+              props.goToGamePage();
+          }
+      }, [gameHasStarted]);
     
   
     // Creates a PlayerView component for given player.

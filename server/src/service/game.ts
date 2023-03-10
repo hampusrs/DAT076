@@ -73,7 +73,7 @@ class GameService implements IGameService {
     if (this.currentSong == null) {
       return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers };
     }
-    return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
+    return { gameHasStarted: this.gameHasStarted, currentPlayers: await this.findPlayersWithSong(this.currentSong), currentSong: this.currentSong };
   }
 
   
