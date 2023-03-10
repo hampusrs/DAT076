@@ -1,8 +1,8 @@
 interface SongItemProps {
-  title: string;
-  artist: string;
-  album: string;
-  albumCoverURI: string;
+  title?: string;
+  artist?: string;
+  album?: string;
+  albumCoverURI?: string;
   children?: React.ReactNode;
 }
 

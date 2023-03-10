@@ -13,6 +13,7 @@ const CLIENT_ID = process.env["CLIENT_ID"];
 const CLIENT_SECRET = process.env["CLIENT_SECRET"];
 const REDIRECT_URI = process.env["REDIRECT_URI"];
 
+
 gameRouter.get("/game", async (_, res) => {
   try {
     res.status(200).send(await gameService.getPlayers());
@@ -21,6 +22,18 @@ gameRouter.get("/game", async (_, res) => {
     res.status(500).send(e.message);
   }
 });
+
+
+/*
+gameRouter.get("/game", async (_, res) => {
+    try {
+        res.status(200).send(await gameService.isAlreadyStarted());
+    } catch (e: any) {
+        console.error(e.stack);
+        res.status(500).send(e.message);
+    }
+});
+*/
 
 interface GameActionRequest extends Request {
   body: { action: string };
@@ -44,25 +57,25 @@ gameRouter.get(
       res.status(500).send(e.message);
     }
   }
-);
-
-// Request needs to contain body with 'action'.
-gameRouter.post(
-  "/game",
-  async (
-    req: GameActionRequest,
-    res: Response<string | { currentSong: Song; players: Player[] }>
-  ) => {
-    try {
-      const action: string = req.body.action;
-      if (action == "StartGame") {
-        const startGameResponse:
-          | { currentSong: Song; players: Player[] }
-          | undefined = await gameService.startGame();
-        if (startGameResponse == null) {
-          res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
-        }
-        res.status(200).send(startGameResponse);
+  );
+  
+  // Request needs to contain body with 'action'.
+  gameRouter.post(
+    "/game",
+    async (
+      req: GameActionRequest,
+      res: Response<string | { currentSong: Song; players: Player[] }>
+      ) => {
+        try {
+          const action: string = req.body.action;
+          if (action == "StartGame") {
+            const startGameResponse: 
+            | { currentSong: Song; players: Player[] } 
+            | undefined = await gameService.startGame();
+            if (startGameResponse == null) {
+              res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
+            } 
+            res.status(200).send(startGameResponse);
       } else if (action == "NextSong") {
         const nextSongResponse:
           | { currentSong: Song; players: Player[] }

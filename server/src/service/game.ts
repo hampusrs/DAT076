@@ -17,7 +17,7 @@ interface IGameService {
 class GameService implements IGameService {
   allPlayers: Player[] = [];
   gameHasStarted: boolean = false;
-  currentSong: Song | undefined;
+  currentSong: Song | undefined = undefined;
   shuffledSongs: Song[] =  [];
 
   //Gets all players
@@ -25,7 +25,11 @@ class GameService implements IGameService {
     return { players: this.allPlayers };
   }
 
+  
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
+    if (this.gameHasStarted == true){
+      return undefined;
+    }
     if (this.currentSong == null) {
       await this.setupSongs();
       this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1); //Pick first song in shuffledSongs.
@@ -38,6 +42,16 @@ class GameService implements IGameService {
       return undefined;   //returns undefined if game is already started.
     }
   }
+  
+
+  /**
+  async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
+    await this.setupSongs();
+    this.gameHasStarted = true;
+    //this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1); //Pick first song in shuffledSongs.
+    return await this.nextSong();
+  }
+  */
 
   async addPlayer(username: string, topSongs : Song[]) {
     const p: Player = { name: username, topSongs: topSongs };
@@ -59,9 +73,10 @@ class GameService implements IGameService {
     if (this.currentSong == null) {
       return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers };
     }
-    return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
+    return { gameHasStarted: this.gameHasStarted, currentPlayers: await this.findPlayersWithSong(this.currentSong), currentSong: this.currentSong };
   }
 
+  
   async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
     if (this.currentSong == null) {
       return undefined;
@@ -73,6 +88,18 @@ class GameService implements IGameService {
       return {currentSong : this.currentSong , players : await this.findPlayersWithSong(this.currentSong)}
     }
   }
+  
+/**
+  async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
+      this.currentSong = this.shuffledSongs.pop();
+      if (this.currentSong == null) {
+        return undefined;
+      }
+      return {currentSong : this.currentSong , players : await this.findPlayersWithSong(this.currentSong)}
+
+  }
+  */
+
 
   async findSongs(): Promise<Song[]> {
     const uniqueSongs: Set<Song> = new Set(this.allPlayers.flatMap(player => player.topSongs));
