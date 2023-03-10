@@ -115,7 +115,6 @@ gameRouter.get("/login", (_, res) => {
 
 // TODO: Better response handling
 gameRouter.get("/callback", async (req, res) => {
-  console.log(req);
   const code = req.query["code"] || null;
 
   try {
