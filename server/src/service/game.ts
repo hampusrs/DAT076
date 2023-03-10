@@ -50,11 +50,7 @@ class GameService implements IGameService {
 
       await this.setupSongs(); //updates this.shuffledSongs
       this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1);
-      // TODO maybe add the shuffledSongs to database.
 
-
-      console.log(this.currentSong);
-      
       if (this.game == null) {
         throw new Error(`Game is null :( 213`);
       }
@@ -62,9 +58,9 @@ class GameService implements IGameService {
         { _id: (await this.game)._id },
         {
           $set: {
+            allPlayers: this.allPlayers,
             currentSong: this.currentSong,
-            shuffledSongs: this.shuffledSongs,
-            allPlayers: this.allPlayers
+            shuffledSongs: this.shuffledSongs
           }
         }
       );
@@ -156,6 +152,22 @@ class GameService implements IGameService {
     return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
   }
 
+  async recoverDataFromDatabase(): Promise<undefined | {allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[]}> {
+    await gameModel.find({ _id: (await this.game)._id }, (err: any, obj: any) => {
+      this.allPlayers = obj[0].toObject().allPlayers;
+      this.currentSong = obj[0].toObject().currentSong;
+      this.gameHasStarted = obj[0].toObject().gameHasStarted;
+      this.shuffledSongs = obj[0].toObject().shuffledSongs;
+      
+      if(err) {
+        return undefined;
+      } else {
+        return {allPlayers: this.allPlayers, gameHasStarted: this.gameHasStarted, currentSong: this.currentSong, shuffledSongs: this.shuffledSongs};
+      }
+    });
+    return undefined;
+  }
+
   async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
     // const game = await this.getGame();
     // if (game == null) {
@@ -171,6 +183,7 @@ class GameService implements IGameService {
         {
           $set: {
             currentSong: this.currentSong,
+            shuffledSongs: this.shuffledSongs
           }
         }
       );

@@ -7,7 +7,7 @@ import { songModel } from "./song.db";
 
 const gameSchema : Schema = new Schema({
     allPlayers: {
-        type: [{type : Array, ref: playerModel}],  //ska de vara playermodel, playerSchema eller bara array<Player>
+        type: [{type : Array, ref: playerModel}],
         required: true,
     },
     gameHasStarted: {
@@ -25,4 +25,4 @@ const gameSchema : Schema = new Schema({
 
 })
 
-export const gameModel = conn.model("Game", gameSchema);  //con.model<????>
+export const gameModel = conn.model("Game", gameSchema);

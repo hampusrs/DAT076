@@ -46,6 +46,17 @@ gameRouter.get(
   }
 );
 
+gameRouter.get("/game/recover",
+async (_, res: Response<string | {allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[]}>
+) => {
+try {
+  res.status(200).send(await gameService.recoverDataFromDatabase());
+} catch (e : any) {
+  console.error(e.stack);
+  res.status(400).send(e.message);
+}
+})
+
 // Request needs to contain body with 'action'.
 gameRouter.post(
   "/game",
