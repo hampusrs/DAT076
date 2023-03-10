@@ -154,14 +154,13 @@ gameRouter.get("/callback", async (req, res) => {
           const tracks = topTracksResponse.data;
 
           // user name
-          const username: string = userinfo.id;
           const display_name: string = userinfo.display_name;
           let playerName: string;
           if (display_name == null) {
             // if display name is not found
-            playerName = username; // set player's name to only username
+            playerName ='N/A'; // set default user name
           } else {
-            playerName = `${display_name} (${username})`;
+            playerName = display_name;
           }
 
           // top songs
