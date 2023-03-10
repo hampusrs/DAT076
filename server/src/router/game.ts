@@ -115,7 +115,6 @@ gameRouter.get("/login", (_, res) => {
 
 // TODO: Better response handling
 gameRouter.get("/callback", async (req, res) => {
-  console.log(req);
   const code = req.query["code"] || null;
 
   try {
@@ -167,17 +166,14 @@ gameRouter.get("/callback", async (req, res) => {
           const tracks = topTracksResponse.data;
 
           // user name
-          const username: string = userinfo.id;
           const display_name: string = userinfo.display_name;
           let playerName: string;
           if (display_name == null) {
             // if display name is not found
-            playerName = username; // set player's name to only username
+            playerName ='N/A'; // set default user name
           } else {
-            playerName = `${display_name} (${username})`;
+            playerName = display_name;
           }
-
-          console.log(tracks)
 
           // top songs
           const topSongs: Song[] = [];
@@ -203,27 +199,16 @@ gameRouter.get("/callback", async (req, res) => {
         expires_in,
       });
 
-      res.redirect(`http://localhost:3000/?${queryParams}`);
+      res.status(200).redirect(`http://localhost:3000/?${queryParams}`);
     }
   } catch (error: AxiosError | any) {
-    if (axios.isAxiosError(error)) {
+    if (axios.isAxiosError(error)) { // caused by requests send to SpotifyAPI
       if (!(error.response?.status == null)) {
-        if (error.response?.status === 403) {
-          // Could be because user is not added in Spotify App dashboard
-          res
-            .status(error.response?.status)
-            .send(
-              `Cannot fetch user data, expired access token or user has not allowed access`
-            );
-        } else {
-          res
-            .status(error.response?.status)
-            .send(
-              `Axios error with status code ${error.response?.status}, ${error.response?.statusText}, Bad request to Spotify API`
-            );
-        }
+        res
+          .status(error.response?.status)
+          .redirect('http://localhost:3000');
       } else {
-        res.send(error).status(500);
+        res.status(500).redirect('http://localhost:3000');
       }
     }
   }
