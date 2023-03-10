@@ -20,11 +20,11 @@ interface Player {
 
 export function PlayGame() {
     // currentSong is undefined if game has not yet started, otherwise current song
-    //const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
-    const currentSong = useRef<Song | undefined>(undefined);
+    const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
+    //const currentSong = useRef<Song | undefined>(undefined);
     // players that has current song as top song
-    //const [currentPlayers, setCurrentPlayers] = useState<Player[] | undefined>(undefined);
-    const currentPlayers = useRef<Player[] | undefined>(undefined);
+    const [currentPlayers, setCurrentPlayers] = useState<Player[] | undefined>(undefined);
+    //const currentPlayers = useRef<Player[] | undefined>(undefined);
     // ALL players that are currently in the game
     const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
@@ -76,10 +76,10 @@ export function PlayGame() {
         if (!gameHasStarted) {
             const response = await axios.post<{
                 currentSong: Song,
-                players: Player[]
+                currentPlayers: Player[]
             }>("http://localhost:8080/game", {action: 'StartGame'});
-            currentSong.current = (response.data.currentSong);
-            currentPlayers.current = (response.data.players);
+            setCurrentSong(response.data.currentSong);
+            setCurrentPlayers(response.data.currentPlayers);
             //gameHasStarted.current = true;
             setGameHasStarted(true);
         }
@@ -93,8 +93,8 @@ export function PlayGame() {
             currentPlayers: Player[];
             currentSong: Song;
         }>("http://localhost:8080/game/started");
-        currentSong.current = (response.data.currentSong);
-        currentPlayers.current = (response.data.currentPlayers);
+        setCurrentSong(response.data.currentSong);
+        setCurrentPlayers(response.data.currentPlayers);
         setGameHasStarted(response.data.gameHasStarted);
     }
 
@@ -103,23 +103,23 @@ export function PlayGame() {
         const intervalId = setInterval(() => {
             void (async () => {
                 await fetchGame();
-                console.log(currentSong);
             })();
         }, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
 
-    /*
-      async function nextSong() {
+
+    async function nextSong() {
         setReset(false);
         const response = await axios.post<{
-          currentSong: Song;
-          currentPlayers: Player[];
-        }>("http://localhost:8080/game", { action: "NextSong" });
-        currentSong.current = (response.data.currentSong);
-        currentPlayers.current = (response.data.currentPlayers);
-      }*/
+            currentSong: Song;
+            currentPlayers: Player[];
+        }>("http://localhost:8080/game", {action: "NextSong"});
+        setCurrentSong(response.data.currentSong);
+        setCurrentPlayers(response.data.currentPlayers);
+        console.log(currentPlayers);
+    }
 
 
     // Creates a PlayerView component for given player.
@@ -146,48 +146,45 @@ export function PlayGame() {
     //let players: string[] = currentPlayers?.map(getPlayerName);
 
     return (
-            <div className="PlayGame">
-                <div className="SongItem">
-                    {currentSong == null ? (
-                            <p>No Game Right Now</p>
-                            ) : (
-                                    <SongItem
-                                        title={currentSong.current?.title}
-                                        artist={currentSong.current?.artist}
-                                        album={currentSong.current?.album}
-                                        albumCoverURI={currentSong.current?.albumCoverURI}
-                                    />
-                                    )}
-                </div>
-                <div className="RevealItem">
-                    <label className="Question"> Who's top song is this? </label>
-                    <RevealPlayersCard players={currentPlayers.current?.map(getPlayerName)} />
-                </div>
+        <div className="PlayGame">
+            <div className="SongItem">
+                {currentSong == null ? (
+                    <p>No Game Right Now</p>
+                ) : (
+                    <SongItem
+                        title={currentSong.title}
+                        artist={currentSong.artist}
+                        album={currentSong.album}
+                        albumCoverURI={currentSong.albumCoverURI}
+                    />
+                )}
+            </div>
+            <div className="RevealItem">
+                <label className="Question"> Who's top song is this? </label>
+                <RevealPlayersCard players={currentPlayers?.map(getPlayerName)}/>
+            </div>
+            <button
+                className="NextSongBtn GreenButton"
+                onClick={nextSong}
+            >
+                Next Song
+            </button>
+            <div className="showAllPlayersDiv">
                 <button
-                    className="NextSongBtn GreenButton"
-                    onClick={() => {
-                    console.log("albumPath: " + currentSong.current?.albumCoverURI);
-                    console.log(currentSong);
-                }}
-                    >
-                    Next Song
+                    className="showPlayersButton GreenButton"
+                    onClick={showPlayerButtonAction}
+                >
+                    Show all players
                 </button>
-                <div className="showAllPlayersDiv">
-                    <button
-                        className="showPlayersButton GreenButton"
-                        onClick={showPlayerButtonAction}
-                        >
-                        Show all players
-                    </button>
-                    <div className="playersList">
-                        {/* If open is true then display all players otherwise display nothing. */}
-                        {open
-            ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
-            : null}
-                    </div>
+                <div className="playersList">
+                    {/* If open is true then display all players otherwise display nothing. */}
+                    {open
+                        ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
+                        : null}
                 </div>
             </div>
-            );
+        </div>
+    );
 }
 
 export default PlayGame;
