@@ -1,13 +1,7 @@
-import React, {useEffect, useState, useRef} from 'react';
-import logo from './logo.svg';
-import './App.css';
-import {SongItem} from './components/SongItem';
-import {PlayersView} from "./components/PlayersView"
-import RevealPlayersCard from "./components/RevealPlayersCard"
-
-
-import axios from 'axios';
-import {Dropdown} from 'react-bootstrap';
+import {useState} from 'react';
+import {PreGame} from './PreGame'
+import PlayGame from './PlayGame';
+import Login from "./Login";
 
 export interface Song {
     title: string;
@@ -21,117 +15,32 @@ export interface Player {
     topSongs: Song[];
 }
 
-export interface Player {
-    name: string;
-    topSongs: Song[];
+enum Page {
+    LOGIN,
+    PREGAME,
+    PLAYGAME
 }
 
 export function App() {
-    // currentSong is undefined if game has not yet started, otherwise current song
-    const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
-    // players that has current song as top song
-    const [currentPlayers, setCurrentPlayers] = useState<Player[] | undefined>(undefined);
-    // ALL players that are currently in the game
-    const [players, setPlayers] = useState<Player[] | undefined>(undefined);
-    // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
-    const [open, setOpen] = useState<boolean>(false)
 
-    //const [players, setPlayers] = useState<Player[] | undefined>(undefined);
-    const [reset, setReset] = useState<boolean>(false)
-    const startedGame = useRef<boolean>(false);
+    const [page, setPage] = useState<Page>(Page.LOGIN);
 
-
-    useEffect(() => {
-        startGame();
-    }, []);
-
-
-    /**
-     * Gets all players that are currently playing the game.
-     * Updates players accordingly.
-     */
-    async function getPlayers() {
-        // request the games players, GET request and set players to the response
-        const response = await axios.get<{ players: Player[] }>("http://localhost:8080/game");
-        setPlayers(response.data.players);
+    switch (page) {
+        case Page.PREGAME:
+            return <PreGame goToGamePage={() => {
+                setPage(Page.PLAYGAME);
+            }}/>
+        case Page.PLAYGAME:
+            return <PlayGame/>
+        case Page.LOGIN:
+            return <Login goToPreGamePage={() => {
+                setPage(Page.PREGAME);
+            }}/>
+        default:
+            return <Login goToPreGamePage={() => {
+                setPage(Page.PREGAME);
+            }}/>
     }
-
-
-    async function startGame() {
-        if (!startedGame.current) {
-            startedGame.current = true;
-            const response = await axios.post<{
-                currentSong: Song,
-                players: Player[]
-            }>("http://localhost:8080/game", {action: 'StartGame'});
-            setCurrentSong(response.data.currentSong);
-            setCurrentPlayers(response.data.players);
-        } else {
-            nextSong();
-        }
-    }
-
-
-    async function nextSong() {
-        setReset(false);
-        const response = await axios.post<{
-            currentSong: Song,
-            players: Player[]
-        }>("http://localhost:8080/game", {action: 'NextSong'});
-        setCurrentSong(response.data.currentSong);
-        setCurrentPlayers(response.data.players);
-    }
-
-    let imagePath: string = "./images/" + currentSong?.title + ".jpg"
-
-// Creates a PlayerView component for given player.
-    function displayPlayer(player: Player) {
-        return <PlayersView pName={player.name}> </PlayersView>
-    }
-
-    /**
-     * Since onClick for showPlayersButton has to execute two methods we
-     * put the both here and then only calls one method in the onClick. */
-    function showPlayerButtonAction() {
-        getPlayers();
-        setOpen(!open);
-    }
-
-
-    function getPlayerName(player: Player): string {
-        if (player == null) {
-            return "";
-        }
-        return player.name
-    }
-
-    //let players: string[] = currentPlayers?.map(getPlayerName);
-
-    return (
-        <div className="App">
-            <div className='SongItem'>
-                {(currentSong == null)
-                    ? <p>No Game Right Now</p>
-                    : <SongItem title={currentSong.title} artist={currentSong.artist} album={currentSong.album}
-                                albumCoverPath={imagePath}/>}
-            </div>
-            <div className='RevealItem'>
-                <label className='Question'> Who's top song is this? </label>
-                <RevealPlayersCard players={currentPlayers?.map(getPlayerName)}/>
-            </div>
-            <button className="NextSongBtn GreenButton" onClick={nextSong}>Next Song</button>
-            <div className="showAllPlayersDiv">
-                <button className="showPlayersButton GreenButton" onClick={showPlayerButtonAction}>Show all players</button>
-                <div className="playersList">
-                    {/* If open is true then display all players otherwise display nothing. */}
-                    {open
-                        ? players?.map(displayPlayer) //Apply displayPlayer to all players in players.
-                        : null
-                    }
-                </div>
-            </div>
-        </div>
-    );
 }
 
 export default App;

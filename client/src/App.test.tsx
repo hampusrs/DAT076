@@ -10,7 +10,7 @@ test('Check that app renders next button', () => {
 });
 
 test('Check that song is rendered', () => {
-  render(<SongItem title="FireWorks" artist = "Katy Perry" album="Teenage Dream" albumCoverPath="./logo.svg"></SongItem>);
+  render(<SongItem title="FireWorks" artist = "Katy Perry" album="Teenage Dream" albumCoverURI="./logo.svg"></SongItem>);
   expect(screen.getByText(/Katy Perry/)).toBeInTheDocument();
   expect(screen.getByText(/Teenage Dream/)).toBeInTheDocument();
 });

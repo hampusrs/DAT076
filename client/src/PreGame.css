@@ -1,0 +1,63 @@
+.CurrentPlayers{
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: black;
+}
+
+.PlayerTable {
+    width: 40vw;
+    height: 40vh;
+    background-color: white;
+    align-self: center;
+    padding: 1vh;
+    scroll-behavior: auto;
+    border-radius: 2%;
+}
+
+.StartGameBtn {
+    align-self: center;
+    margin-top: 10vh;
+    background-color: #4CAF50;
+    border-color: transparent;
+    border-radius: 50px;
+    width: fit-content;
+    height: fit-content;
+    padding: 4vh;
+    font-family: 'Times New Roman', Times, serif;
+
+}
+
+.StartGameBtn:hover {background-color: #4caf4fd1}
+
+.StartGameBtn:active {
+  background-color: #4caf4fd1;
+  transform: translateY(4px);
+}
+
+.Content{
+    width: 40vw;
+    height: 40vh;
+    margin:auto;
+    background-color: rgb(255, 255, 255);
+    overflow:scroll;
+    overflow-x:hidden;
+}
+
+.Label {
+    font-weight: bold;
+    font-size: x-large;
+}
+
+.playerView {
+    clear: both;
+    overflow:visible;
+    margin-top: 2vh;
+    margin-bottom: 2vh;
+    font-weight: bold;
+    text-align: center;
+    font-size: 4vh;
+    font-family: 'Times New Roman', Times, serif;
+}
