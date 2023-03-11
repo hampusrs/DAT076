@@ -29,6 +29,7 @@ export function PlayGame() {
     const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
     const [open, setOpen] = useState<boolean>(false)
+    const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
 
     //const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     //const [reset, setReset] = useState<boolean>(false)
@@ -111,6 +112,7 @@ export function PlayGame() {
 
 
     async function nextSong() {
+        hidePlayers();
         setReset(false);
         const response = await axios.post<{
             currentSong: Song;
@@ -118,7 +120,7 @@ export function PlayGame() {
         }>("http://localhost:8080/game", {action: "NextSong"});
         setCurrentSong(response.data.currentSong);
         setCurrentPlayers(response.data.currentPlayers);
-        console.log(currentPlayers);
+        //console.log(currentPlayers);
     }
 
 
@@ -142,6 +144,19 @@ export function PlayGame() {
         return player.name
     }
 
+    function revealPlayers() {
+        setCurrentPlayersAreRevealed(true);
+    }
+
+    function hidePlayers(){
+        setCurrentPlayersAreRevealed(false);
+    }
+
+    /*
+    useEffect(() => {
+        console.log("HEJ");
+    }, [currentPlayersAreRevealed]);
+    */
 
     //let players: string[] = currentPlayers?.map(getPlayerName);
 
@@ -162,6 +177,12 @@ export function PlayGame() {
             <div className="RevealItem">
                 <label className="Question"> Who's top song is this? </label>
                 <RevealPlayersCard players={currentPlayers?.map(getPlayerName)}/>
+            </div>
+            <div className="RevealItem">
+                {currentPlayersAreRevealed ? currentPlayers?.map(getPlayerName) : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
+                    Reveal players
+                </button>}
+                
             </div>
             <button
                 className="NextSongBtn GreenButton"
