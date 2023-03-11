@@ -67,7 +67,7 @@ gameRouter.post(
       const action: string = req.body.action;
       if (action == "StartGame") {
         const startGameResponse:
-          | { currentSong: Song; players: Player[] }
+          { currentSong: Song; players: Player[] }
           | undefined = await gameService.startGame();
         if (startGameResponse == null) {
           res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
@@ -207,6 +207,19 @@ gameRouter.get("/callback", async (req, res) => {
   }
 });
 
+// FOR TESTING: Manually adding a player to game without having to log into Spotify
+gameRouter.post("/game/players", (req,res) => {
+  const username : string = req.body.username;
+  const topSongs : Song[] = req.body.topSongs;
+
+  const addPlayerResponse = gameService.addPlayer(username,topSongs);
+  if (addPlayerResponse == null) {
+    res.status(400).send(`Player ${username} is already in game`);
+  } else {
+    res.status(200).send(`Successfully added player ${username} to the game`);
+  }
+})
+
 const generateRandomString = (length: number) => {
   let text = "";
   const possible =
@@ -216,3 +229,6 @@ const generateRandomString = (length: number) => {
   }
   return text;
 };
+
+
+
