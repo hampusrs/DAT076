@@ -67,7 +67,7 @@ gameRouter.post(
       const action: string = req.body.action;
       if (action == "StartGame") {
         const startGameResponse:
-          { currentSong: Song; players: Player[] }
+          | { currentSong: Song; players: Player[] }
           | undefined = await gameService.startGame();
         if (startGameResponse == null) {
           res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
@@ -97,10 +97,14 @@ gameRouter.post(
 gameRouter.get("/login", (_, res) => {
   const scope = "user-top-read user-read-email";
 
-  const queryParams = `client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${encodeURIComponent(
-    scope
-  )}`;
-  res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
+  if (CLIENT_ID == null || REDIRECT_URI == null) {
+    res.status(500).send("Server error: Enviroment variables not set up correctly");
+  } else {
+    const queryParams = `client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${encodeURIComponent(
+      scope
+    )}`;
+    res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
+  }
 });
 
 gameRouter.get("/callback", async (req, res) => {
@@ -186,11 +190,10 @@ gameRouter.get("/callback", async (req, res) => {
           )}&refresh_token=${encodeURIComponent(
             refresh_token
           )}&expires_in=${encodeURIComponent(expires_in)}`;
-          
+
           res.status(200).redirect(`http://localhost:3000/?${queryParams}`);
         }
       }
-
     }
   } catch (error: AxiosError | any) {
     if (axios.isAxiosError(error)) {
@@ -205,17 +208,14 @@ gameRouter.get("/callback", async (req, res) => {
 });
 
 // FOR TESTING: Manually adding a player to game without having to log into Spotify
-gameRouter.post("/game/players", (req,res) => {
-  const username : string = req.body.username;
-  const topSongs : Song[] = req.body.topSongs;
+gameRouter.post("/game/players", (req, res) => {
+  const username: string = req.body.username;
+  const topSongs: Song[] = req.body.topSongs;
 
-  const addPlayerResponse = gameService.addPlayer(username,topSongs);
+  const addPlayerResponse = gameService.addPlayer(username, topSongs);
   if (addPlayerResponse == null) {
     res.status(400).send(`Player ${username} is already in game`);
   } else {
     res.status(200).send(`Successfully added player ${username} to the game`);
   }
-})
-
-
-
+});
