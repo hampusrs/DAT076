@@ -95,9 +95,6 @@ gameRouter.post(
 );
 
 gameRouter.get("/login", (_, res) => {
-  const state = generateRandomString(16);
-  res.cookie("spotify_auth_state", state);
-
   const scope = "user-top-read user-read-email";
 
   const queryParams = `client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${encodeURIComponent(
@@ -219,16 +216,6 @@ gameRouter.post("/game/players", (req,res) => {
     res.status(200).send(`Successfully added player ${username} to the game`);
   }
 })
-
-const generateRandomString = (length: number) => {
-  let text = "";
-  const possible =
-    "ABDDEFGHIJKLMNOPQRSTUVXYZabcdefghiijklmnopqrstuvxyz0123456789";
-  for (let i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
-  }
-  return text;
-};
 
 
 
