@@ -53,6 +53,13 @@ describe("Before game has started", () => {
       expect(response.body.currentSong).toBeUndefined;
     })
   });
+  describe("GET to /login", () => {
+    test("Should respond with 302 status code and Location header with Spotify login URL", async () => {
+      const response = await request.get("/login");
+      expect(response.statusCode).toBe(302);
+      expect(response.header.location).toContain("https://accounts.spotify.com/authorize");
+      });
+  });
   describe("POST to /game", () => {
     describe("Given a body with action 'NextSong'", () => {
       test("Should give error code 400 and error message", async () => {
@@ -129,20 +136,3 @@ describe("When game has started", () => {
 
 
 
-/*
-test("(/game) Post request with action start game sets a currentSong", async () => {
-  // send start game
-  // check currentSong is not undefined
-});
-
-test("(/game) Post request with action start game sets gameHasStarted to true", async () => {});
-
-test("End-to-end test", async () => {
-  const res1 = await request.get("/game");
-  expect(res1.statusCode).toEqual(200);
-  const res2 = await request.post("/game").send({ action: "StartGame" });
-  expect(res2.statusCode).toEqual(200);
-  console.log(res2.body);
-  expect(res2.body.currentSong).not.toBeNull();
-});
-*/
