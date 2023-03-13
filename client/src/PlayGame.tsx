@@ -18,7 +18,9 @@ interface Player {
     topSongs: Song[];
 }
 
-export function PlayGame() {
+export function PlayGame(props: {
+    goToGameOverPage : () => void
+}) {
     // currentSong is undefined if game has not yet started, otherwise current song
     const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
 
@@ -34,6 +36,24 @@ export function PlayGame() {
     const [reset, setReset] = useState<boolean>(false); //Vad gör denna?
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false);
     const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
+
+    
+    const [status, setStatus] = useState<boolean>(false)
+   
+
+    async function getSongList() : Promise<void> {
+        try {
+            await axios.post("http://localhost:8080/game", {action: 'NextSong'});
+            setStatus(true);
+          } catch (error : any) {
+            if (error.response.status === 400) {
+              console.log("test");
+              props.goToGameOverPage();
+              setStatus(false)
+            }
+          }
+    } 
+
 
     /**
      * Gets all players that are currently playing the game.
@@ -79,24 +99,32 @@ export function PlayGame() {
             void (async () => {
                 await fetchGame();
                 await playersAreRevealed();
+
             })();
         }, 1000);
 
         return () => clearInterval(intervalId);
     }, []);
 
-
+    /**
+     * Gets the next song in the game and if there are no more songs left the player will be redirected to the 
+     * gameOver page. 
+     */
     async function nextSong() {
         await hidePlayers();
-        setReset(false);
-        const response = await axios.post<{
-            currentSong: Song;
-            currentPlayers: Player[];
-        }>("http://localhost:8080/game", {action: "NextSong"});
-        setCurrentSong(response.data.currentSong);
-        setCurrentPlayers(response.data.currentPlayers);
-    }
 
+        setReset(false);
+        try {
+            const response = await axios.post<{
+                currentSong: Song;
+                currentPlayers: Player[];
+            }>("http://localhost:8080/game", {action: "NextSong"});
+            setCurrentSong(response.data.currentSong);
+            setCurrentPlayers(response.data.currentPlayers);
+        } catch (error) {
+            props.goToGameOverPage();
+        }
+    }
 
     // Creates a PlayerView component for given player.
     function displayPlayer(player: Player) {
