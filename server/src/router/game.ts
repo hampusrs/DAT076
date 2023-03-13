@@ -1,24 +1,26 @@
-import express, { Request, Response } from "express";
-import { Song } from "../model/Song";
-import { Player } from "../model/Player";
-import { makeGameService } from "../service/game";
+import express, {Request, Response} from "express";
+import {Song} from "../model/Song";
+import {Player} from "../model/Player";
+import {makeGameService} from "../service/game";
+
 export const gameRouter = express.Router();
 const gameService = makeGameService();
 import dotenv from "dotenv";
+
 dotenv.config();
-import axios, { AxiosError } from "axios";
+import axios, {AxiosError} from "axios";
 
 const CLIENT_ID = process.env["CLIENT_ID"];
 const CLIENT_SECRET = process.env["CLIENT_SECRET"];
 const REDIRECT_URI = process.env["REDIRECT_URI"];
 
 gameRouter.get("/game", async (_, res) => {
-  try {
-    res.status(200).send(await gameService.getPlayers());
-  } catch (e: any) {
-    console.error(e.stack);
-    res.status(500).send(e.message);
-  }
+    try {
+        res.status(200).send(await gameService.getPlayers());
+    } catch (e: any) {
+        console.error(e.stack);
+        res.status(500).send(e.message);
+    }
 });
 
 /*
@@ -33,65 +35,65 @@ gameRouter.get("/game", async (_, res) => {
 */
 
 interface GameActionRequest extends Request {
-  body: { action: string };
+    body: { action: string };
 }
 
 // Checks if game has already started
 gameRouter.get(
-  "/game/started",
-  async (
-    _,
-    res: Response<{
-      gameHasStarted: boolean;
-      currentPlayers: Player[];
-      currentSong?: Song;
-    }>
-  ) => {
-    try {
-      res.status(200).send(await gameService.isAlreadyStarted());
-    } catch (e: any) {
-      console.error(e.stack);
-      res.status(500).send(e.message);
+    "/game/started",
+    async (
+        _,
+        res: Response<{
+            gameHasStarted: boolean;
+            currentPlayers: Player[];
+            currentSong?: Song;
+        }>
+    ) => {
+        try {
+            res.status(200).send(await gameService.isAlreadyStarted());
+        } catch (e: any) {
+            console.error(e.stack);
+            res.status(500).send(e.message);
+        }
     }
-  }
 );
 
 // Request needs to contain body with 'action'.
 gameRouter.post(
-  "/game",
-  async (
-    req: GameActionRequest,
-    res: Response<string | { currentSong: Song; players: Player[] }>
-  ) => {
-    try {
-      const action: string = req.body.action;
-      if (action == "StartGame") {
-        const startGameResponse:
-          | { currentSong: Song; players: Player[] }
-          | undefined = await gameService.startGame();
-        if (startGameResponse == null) {
-          res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
+    "/game",
+    async (
+        req: GameActionRequest,
+        res: Response<string | { currentSong: Song; players: Player[] }>
+    ) => {
+        try {
+            const action: string = req.body.action;
+            if (action == "StartGame") {
+                const startGameResponse:
+                    | { currentSong: Song; players: Player[] }
+                    | undefined = await gameService.startGame();
+                if (startGameResponse == null) {
+                    res.status(400).send(`Game has already started or game has no songs`); // TODO: Separate the two cases
+                }
+                res.status(200).send(startGameResponse);
+            } else if (action == "NextSong") {
+                const nextSongResponse:
+                    | { currentSong: Song; players: Player[] }
+                    | undefined = await gameService.nextSong();
+                if (nextSongResponse == null) {
+                    res
+                        .status(400)
+                        .send("Game has not started yet or no songs left in queue"); // TODO: Separate the two cases
+                }
+                res.status(200).send(nextSongResponse);
+            } else {
+                res.status(400).send(`The action '${action}' is not defined`);
+            }
+        } catch (e: any) {
+            // Catches possible errors from GameService
+            console.error(e.stack);
+            res.status(500).send(e.message);
         }
-        res.status(200).send(startGameResponse);
-      } else if (action == "NextSong") {
-        const nextSongResponse:
-          | { currentSong: Song; players: Player[] }
-          | undefined = await gameService.nextSong();
-        if (nextSongResponse == null) {
-          res
-            .status(400)
-            .send("Game has not started yet or no songs left in queue"); // TODO: Separate the two cases
-        }
-        res.status(200).send(nextSongResponse);
-      } else {
-        res.status(400).send(`The action '${action}' is not defined`);
-      }
-    } catch (e: any) {
-      // Catches possible errors from GameService
-      console.error(e.stack);
-      res.status(500).send(e.message);
     }
-  }
 );
 
 gameRouter.get("/login", (_, res) => {
@@ -212,6 +214,7 @@ gameRouter.get("/callback", async (req, res) => {
   }
 });
 
+
 // FOR TESTING: Manually adding a player to game without having to log into Spotify
 gameRouter.post("/game/players", (req, res) => {
   const username: string = req.body.username;
@@ -224,3 +227,46 @@ gameRouter.post("/game/players", (req, res) => {
     res.status(200).send(`Successfully added player ${username} to the game`);
   }
 });
+
+
+interface RevealPlayersRequest extends Request {
+    body: { action: string };
+}
+
+gameRouter.get("/game/currentSong/isRevealed", async (_, res) => {
+    try {
+        res.status(200).send({playersAreRevealed: gameService.playersAreRevealed});
+    } catch (e: any) {
+        console.error(e.stack);
+        res.status(500).send(e.message);
+    }
+});
+
+gameRouter.post(
+    "/game/currentSong/isRevealed",
+    async (
+        req: RevealPlayersRequest,
+        res: Response<string | { playersAreRevealed: boolean }>) => {
+        try {
+            const action: string = req.body.action;
+
+            if (!gameService.gameHasStarted) {
+                res.status(400).send("The game has not started yet");
+            }
+
+            if (action == "HidePlayers") {
+                await gameService.hidePlayers();
+                res.status(200).send();
+            } else if (action == "RevealPlayers") {
+                await gameService.revealPlayers();
+                res.status(200).send();
+            } else {
+                res.status(400).send(`The action '${action}' is not defined`);
+            }
+        } catch (e: any) {
+            // Catches possible errors from GameService
+            console.error(e.stack);
+            res.status(500).send(e.message);
+        }
+    }
+);

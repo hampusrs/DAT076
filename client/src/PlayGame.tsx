@@ -78,6 +78,7 @@ export function PlayGame(props: {
             setCurrentPlayers(response.data.currentPlayers);
             setGameHasStarted(true);
         }
+
     }
 
     async function fetchGame() {
@@ -97,6 +98,7 @@ export function PlayGame(props: {
             void (async () => {
                 await fetchGame();
                 await playersAreRevealed();
+                await playersAreRevealed();
             })();
         }, 1000);
 
@@ -108,6 +110,7 @@ export function PlayGame(props: {
      * gameOver page. 
      */
     async function nextSong() {
+        await hidePlayers();
         await hidePlayers();
         setReset(false);
         try {
@@ -152,12 +155,12 @@ export function PlayGame(props: {
     async function revealPlayers() {
         const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
         if (response.status === 200) {
-            setCurrentPlayersAreRevealed(true);
+        setCurrentPlayersAreRevealed(true);
         }
         //await axios.post("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
     }
 
-    async function hidePlayers() {
+    async function hidePlayers(){
         const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "HidePlayers"});
         if (response.status === 200) {
             setCurrentPlayersAreRevealed(false);
@@ -183,11 +186,9 @@ export function PlayGame(props: {
             </div>
             <div className="RevealItem">
                 <label className="Question"> Who's top song is this? </label>
-                {currentPlayersAreRevealed ?
-                    <RevealPlayersView players={currentPlayers?.map(getPlayerName)}/>
-                    : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
-                        Reveal players
-                    </button>}
+                {currentPlayersAreRevealed ? currentPlayers?.map(getPlayerName) : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
+                    Reveal players
+                </button>}
             </div>
             <div className="next-song-div">
                 <button
