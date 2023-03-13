@@ -20,10 +20,9 @@ export function Login(props: {
     }
 
     return (
-        <div className="Login center">
-            <header className="App-header">
+        <div className="Login">
+                <div className='Label'>Click right to log in</div>
                 <button className="login-button" onClick={loginWithSpotify}>Log in</button>
-            </header>
         </div>
     );
 }

@@ -123,7 +123,6 @@ class GameService implements IGameService {
         const playersWithSong = this.allPlayers.filter((player) => {
             return player.topSongs.some((song) => song.id === currentSong.id);
         });
-        console.log(playersWithSong);
         if (playersWithSong.length == 0) {
             throw new Error(`No player have this song as one of their top songs.`);
         }
