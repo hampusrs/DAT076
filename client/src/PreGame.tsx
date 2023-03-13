@@ -64,7 +64,7 @@ import axios from "axios";
           e.preventDefault();
           props.goToGamePage();
         }}>
-          <label className="Label">Start Game</label>
+          <label className="StartGameLabel">Start Game</label>
         </button>
       </div>
     );
