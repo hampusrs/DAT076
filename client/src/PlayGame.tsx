@@ -1,8 +1,8 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import './PlayGame.css';
 import {SongItem} from './components/SongItem';
 import {PlayersView} from "./components/PlayersView"
-import RevealPlayersCard from "./components/RevealPlayersCard"
+import RevealPlayersView from "./components/RevealPlayersView"
 import axios from 'axios';
 
 
@@ -21,22 +21,19 @@ interface Player {
 export function PlayGame() {
     // currentSong is undefined if game has not yet started, otherwise current song
     const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
-    //const currentSong = useRef<Song | undefined>(undefined);
+
     // players that has current song as top song
     const [currentPlayers, setCurrentPlayers] = useState<Player[] | undefined>(undefined);
-    //const currentPlayers = useRef<Player[] | undefined>(undefined);
+
     // ALL players that are currently in the game
     const [players, setPlayers] = useState<Player[] | undefined>(undefined);
+
     // The current state of the playerView. If open is true, the playerView is shown, otherwise not.
     const [open, setOpen] = useState<boolean>(false)
 
-    //const [players, setPlayers] = useState<Player[] | undefined>(undefined);
-    //const [reset, setReset] = useState<boolean>(false)
-    //const startedGame = useRef<boolean>(false);
-    //const [players, setPlayers] = useState<Player[] | undefined>(undefined);
     const [reset, setReset] = useState<boolean>(false); //Vad gör denna?
-    //const gameHasStarted = useRef<boolean>(false);
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false);
+    const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
 
     /**
      * Gets all players that are currently playing the game.
@@ -53,26 +50,6 @@ export function PlayGame() {
     }, [])
 
     async function startGame() {
-        /*if (!startedGame.current) {
-            startedGame.current = true;
-            const response = await axios.post<{
-                currentSong: Song,
-                players: Player[]
-            }>("http://localhost:8080/game", {action: 'StartGame'});
-            setCurrentSong(response.data.currentSong);
-            setCurrentPlayers(response.data.players);
-        } else {
-            nextSong();
-        }*/
-        /*
-              const response = await axios.get<{
-                  gameHasStarted: boolean;
-              }>("http://localhost:8080/game/started");
-              //gameHasStarted.current = (response.data.gameHasStarted);
-              setGameHasStarted(response.data.gameHasStarted);
-        */
-
-
         if (!gameHasStarted) {
             const response = await axios.post<{
                 currentSong: Song,
@@ -80,10 +57,8 @@ export function PlayGame() {
             }>("http://localhost:8080/game", {action: 'StartGame'});
             setCurrentSong(response.data.currentSong);
             setCurrentPlayers(response.data.currentPlayers);
-            //gameHasStarted.current = true;
             setGameHasStarted(true);
         }
-
 
     }
 
@@ -103,6 +78,7 @@ export function PlayGame() {
         const intervalId = setInterval(() => {
             void (async () => {
                 await fetchGame();
+                await playersAreRevealed();
             })();
         }, 1000);
 
@@ -111,6 +87,7 @@ export function PlayGame() {
 
 
     async function nextSong() {
+        await hidePlayers();
         setReset(false);
         const response = await axios.post<{
             currentSong: Song;
@@ -141,6 +118,28 @@ export function PlayGame() {
         return player.name
     }
 
+    async function playersAreRevealed() {
+        const response = await axios.get<{
+            playersAreRevealed: boolean;
+        }>("http://localhost:8080/game/currentSong/isRevealed");
+        setCurrentPlayersAreRevealed(response.data.playersAreRevealed);
+    }
+
+    async function revealPlayers() {
+        const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
+        if (response.status === 200) {
+            setCurrentPlayersAreRevealed(true);
+        }
+        //await axios.post("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
+    }
+
+    async function hidePlayers() {
+        const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "HidePlayers"});
+        if (response.status === 200) {
+            setCurrentPlayersAreRevealed(false);
+        }
+        //await axios.post("http://localhost:8080/game/currentSong/isRevealed", {action: "HidePlayers"});
+    }
 
     //let players: string[] = currentPlayers?.map(getPlayerName);
 
@@ -160,14 +159,19 @@ export function PlayGame() {
             </div>
             <div className="RevealItem">
                 <label className="Question"> Who's top song is this? </label>
-                <RevealPlayersCard players={currentPlayers?.map(getPlayerName)}/>
+                {currentPlayersAreRevealed ?
+                    <RevealPlayersView players={currentPlayers?.map(getPlayerName)}/>
+                    : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
+                        Reveal players
+                    </button>}
             </div>
-            <button
-                className="NextSongBtn GreenButton"
-                onClick={nextSong}
-            >
-                Next Song
-            </button>
+            <div className="next-song-div">
+                <button
+                    className="NextSongBtn GreenButton"
+                    onClick={nextSong}>
+                    Next Song
+                </button>
+            </div>
             <div className="showAllPlayersDiv">
                 <button
                     className="showPlayersButton GreenButton"

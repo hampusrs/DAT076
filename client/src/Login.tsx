@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useRef} from 'react';
+import React, {useEffect, useState} from 'react';
 import './Login.css';
 import {accessToken} from './spotify';
 
@@ -15,7 +15,7 @@ export function Login(props: {
     if (!(token == '')) {
         props.goToPreGamePage();
     }
-    async function loginWithSpotify() {
+    function loginWithSpotify() {
         window.location.href = "http://localhost:8080/login";
     }
 

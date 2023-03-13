@@ -23,6 +23,17 @@ class GameService implements IGameService {
     gameHasStarted: boolean = false;
     currentSong: Song | undefined = undefined;
     shuffledSongs: Song[] = [];
+    playersAreRevealed: boolean = false;
+
+    async revealPlayers(): Promise<{playersAreRevealed: boolean}> {
+        this.playersAreRevealed = true;
+        return {playersAreRevealed: this.playersAreRevealed};
+    }
+
+    async hidePlayers(): Promise<{playersAreRevealed: boolean}> {
+        this.playersAreRevealed = false;
+        return {playersAreRevealed: this.playersAreRevealed};
+    }
 
     //Gets all players
     async getPlayers(): Promise<{ players: Player[] }> {
