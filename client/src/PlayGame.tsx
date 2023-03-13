@@ -155,12 +155,12 @@ export function PlayGame(props: {
     async function revealPlayers() {
         const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
         if (response.status === 200) {
-        setCurrentPlayersAreRevealed(true);
+            setCurrentPlayersAreRevealed(true);
         }
         //await axios.post("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
     }
 
-    async function hidePlayers(){
+    async function hidePlayers() {
         const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "HidePlayers"});
         if (response.status === 200) {
             setCurrentPlayersAreRevealed(false);
@@ -186,9 +186,11 @@ export function PlayGame(props: {
             </div>
             <div className="RevealItem">
                 <label className="Question"> Who's top song is this? </label>
-                {currentPlayersAreRevealed ? currentPlayers?.map(getPlayerName) : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
-                    Reveal players
-                </button>}
+                {currentPlayersAreRevealed ?
+                    <RevealPlayersView players={currentPlayers?.map(getPlayerName)}/>
+                    : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
+                        Reveal players
+                    </button>}
             </div>
             <div className="next-song-div">
                 <button
