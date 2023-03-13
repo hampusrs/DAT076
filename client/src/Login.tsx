@@ -15,7 +15,7 @@ export function Login(props: {
     if (!(token == '')) {
         props.goToPreGamePage();
     }
-    async function loginWithSpotify() {
+    function loginWithSpotify() {
         window.location.href = "http://localhost:8080/login";
     }
 

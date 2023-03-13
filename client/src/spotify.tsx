@@ -33,7 +33,7 @@ const LOCALSTORAGE_VALUES = {
 * @returns {string} A Spotify access token
 */
 const getAccessToken = (): string => {
-    logout();
+    //logout();
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const queryParams: {[key: string]: string | null} = {
@@ -49,9 +49,11 @@ const getAccessToken = (): string => {
     }
 
     // If there is a valid access token in localStorage, use that
+    /*
     if (LOCALSTORAGE_VALUES.accessToken && LOCALSTORAGE_VALUES.accessToken !== 'undefined') {
         return LOCALSTORAGE_VALUES.accessToken;
     }
+    */
 
     // If there is a token in the URL query params, user is logging in for the first time
     if (queryParams[LOCALSTORAGE_KEYS.accessToken]) {
