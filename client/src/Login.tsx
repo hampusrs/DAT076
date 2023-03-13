@@ -13,7 +13,6 @@ export function Login(props: {
 
 
     if (!(token == '')) {
-        //console.log(token);
         props.goToPreGamePage();
     }
     function loginWithSpotify() {
