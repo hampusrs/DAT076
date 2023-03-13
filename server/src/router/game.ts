@@ -221,7 +221,11 @@ interface RevealPlayersRequest extends Request {
 
 gameRouter.get("/game/currentSong/isRevealed", async (_, res) => {
     try {
-        res.status(200).send({playersAreRevealed: gameService.playersAreRevealed});
+        if (gameService.gameHasStarted == false) {
+          res.status(400).send("The game has not started yet");
+        } else {
+          res.status(200).send({playersAreRevealed: gameService.playersAreRevealed});
+        }
     } catch (e: any) {
         console.error(e.stack);
         res.status(500).send(e.message);
@@ -236,11 +240,9 @@ gameRouter.post(
         try {
             const action: string = req.body.action;
 
-            if (!gameService.gameHasStarted) {
+            if (gameService.gameHasStarted == false) {
                 res.status(400).send("The game has not started yet");
-            }
-
-            if (action == "HidePlayers") {
+            } else if (action == "HidePlayers") {
                 await gameService.hidePlayers();
                 res.status(200).send();
             } else if (action == "RevealPlayers") {

@@ -8,18 +8,21 @@ const song1: Song = {
   title: "Firework",
   album: "Teenage Dream",
   artist: "Katy Perry",
+  albumCoverURI: ""
 };
 const song2: Song = {
   id: 2,
   title: "Baby",
   album: "My Worlds",
   artist: "Justin Bieber",
+  albumCoverURI: ""
 };
 const song3: Song = {
   id: 3,
   title: "Levels",
   album: "True",
   artist: "Avicii",
+  albumCoverURI: ""
 };
 
 const player1: Player = { name: "Bob", topSongs: [song1, song2] };
