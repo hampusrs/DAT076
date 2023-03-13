@@ -24,7 +24,7 @@
   margin: 10vh;
   align-items: center;
   gap: 30px;
-  padding-left: 24vw;
+  padding-left: 26vw;
 }
 
 .AlbumCover {
@@ -59,10 +59,9 @@
 }
 
 .NextSongBtn {
-  margin-left: 40vw;
-  margin-right: 40vw;
+  margin-left: 46vw;
+  margin-right: 35vw;
   margin-top: 5vh;
-  height: 4vh;
   font-size: 15px;
 }
 
