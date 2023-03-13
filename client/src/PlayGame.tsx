@@ -118,7 +118,6 @@ export function PlayGame() {
         }>("http://localhost:8080/game", {action: "NextSong"});
         setCurrentSong(response.data.currentSong);
         setCurrentPlayers(response.data.currentPlayers);
-        console.log(currentPlayers);
     }
 
 
