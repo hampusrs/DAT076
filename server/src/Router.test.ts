@@ -51,14 +51,24 @@ describe("Before game has started", () => {
       expect(response.body.gameHasStarted).toBe(false);
       expect(response.body.currentPlayers).toBeDefined;
       expect(response.body.currentSong).toBeUndefined;
-    })
+    });
   });
   describe("GET to /login", () => {
     test("Should respond with 302 status code and Location header with Spotify login URL", async () => {
       const response = await request.get("/login");
       expect(response.statusCode).toBe(302);
-      expect(response.header.location).toContain("https://accounts.spotify.com/authorize");
-      });
+      expect(response.header.location).toContain(
+        "https://accounts.spotify.com/authorize"
+      );
+    });
+  });
+  describe("GET to /callback", () => {
+    test("Should respond with Location header with client URL", async () => {
+      const response = await request.get("/callback");
+      expect(response.header.location).toContain(
+        "http://localhost:3000"
+      );
+    });
   });
   describe("POST to /game", () => {
     describe("Given a body with action 'NextSong'", () => {
@@ -84,7 +94,6 @@ describe("Before game has started", () => {
     });
   });
 });
-
 describe("When game has started", () => {
   describe("POST to /game", () => {
     describe('Given a body  with action "StartGame"', () => {
@@ -124,15 +133,12 @@ describe("When game has started", () => {
     test("Should respond with 200 status code", async () => {
       const response = await request.get("/game/started");
       expect(response.statusCode).toBe(200);
-    })
+    });
     test("Should return body with gameHasStarted = true, currentPlayers and currentSong", async () => {
       const response = await request.get("/game/started");
       expect(response.body.gameHasStarted).toBe(true);
       expect(response.body.currentPlayers).toBeDefined;
       expect(response.body.currentSong).toBeDefined;
-    })
+    });
   });
 });
-
-
-
