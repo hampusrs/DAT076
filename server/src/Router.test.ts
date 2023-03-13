@@ -49,9 +49,16 @@ describe("Before game has started", () => {
     test("Should return body with gameHasStarted = false and currentPlayers, not currentSong", async () => {
       const response = await request.get("/game/started");
       expect(response.body.gameHasStarted).toBe(false);
-      expect(response.body.currentPlayers).toBeDefined;
-      expect(response.body.currentSong).toBeUndefined;
+      expect(response.body.currentPlayers).toBeDefined();
+      expect(response.body.currentSong).toBeUndefined();
     });
+  });
+  describe("GET to /game/currentSong/isRevealed", () => {
+    test("Should respond with a 400 status code and error message", async () => {
+      const response = await request.get("/game/currentSong/isRevealed");
+      expect(response.statusCode).toBe(400);
+      expect(response.text).toBe("The game has not started yet");
+    })
   });
   describe("GET to /login", () => {
     test("Should respond with 302 status code and Location header with Spotify login URL", async () => {
@@ -137,8 +144,15 @@ describe("When game has started", () => {
     test("Should return body with gameHasStarted = true, currentPlayers and currentSong", async () => {
       const response = await request.get("/game/started");
       expect(response.body.gameHasStarted).toBe(true);
-      expect(response.body.currentPlayers).toBeDefined;
-      expect(response.body.currentSong).toBeDefined;
+      expect(response.body.currentPlayers).toBeDefined();
+      expect(response.body.currentSong).toBeDefined();
     });
+  });
+  describe("GET to /game/currentSong/isRevealed", () => {
+    test("Should respond with a 200 status code and body with playersAreRevealed", async () => {
+      const response = await request.get("/game/currentSong/isRevealed");
+      expect(response.statusCode).toBe(200);
+      expect(response.body.playersAreRevealed).toBeDefined();
+    })
   });
 });
