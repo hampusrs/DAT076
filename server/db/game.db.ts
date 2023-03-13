@@ -15,8 +15,8 @@ const gameSchema : Schema = new Schema({
         required: true,
     },
     currentSong: {
-        type: {type: String, ref: songModel},
-        required: false,                         //TODO ska vara true? men då klagar server :(
+        type: [{type: Array, ref: songModel}],  //{id: Number, title: String, artist: String, album: String, albumCoverURI: String}
+        required: true, 
     },
     shuffledSongs: {
         type: [{type: Array, ref: songModel}],

@@ -1,10 +1,8 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
-import { playerModel } from "../../db/player.db";
+// import { playerModel } from "../../db/player.db";
 import { gameModel } from "../../db/game.db";
 // import { songModel } from "../../db/song.db";
-
-//const gameID: number = 123;
 
 interface IGameService {
   // returns all the players currently in the game.
@@ -25,7 +23,6 @@ class GameService implements IGameService {
   currentSong: Song | undefined;
   shuffledSongs: Song[] = [];
 
-
   //Creates a game in the database.
   game = gameModel.create({
     allPlayers: [],
@@ -42,17 +39,12 @@ class GameService implements IGameService {
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
     if (this.currentSong == null) {
 
-      // These three lines will drop all data from the database. 
-      // Which is needed since we dont want ended games to be stored. But these cannot be called here.
-      // gameModel.collection.drop();
-      // playerModel.collection.drop();
-      // songModel.collection.drop();
-
+      await this.dropDB();
       await this.setupSongs(); //updates this.shuffledSongs
-      this.currentSong = this.shuffledSongs.at(this.shuffledSongs.length - 1);
+      this.currentSong = this.shuffledSongs.pop();    //this.shuffledSongs.at(this.shuffledSongs.length - 1);
 
       if (this.game == null) {
-        throw new Error(`Game is null :( 213`);
+        throw new Error(`Game is null`);
       }
       await gameModel.updateOne(
         { _id: (await this.game)._id },
@@ -66,7 +58,6 @@ class GameService implements IGameService {
       );
 
       if (this.currentSong == null) {
-        console.log("1-------------------------");
         return undefined;
       }
 
@@ -82,21 +73,11 @@ class GameService implements IGameService {
 
       return { currentSong: this.currentSong, players: await this.findPlayersWithSong(this.currentSong) };
     } else {
-      console.log("2-------------------------");
       return undefined;   //returns undefined if game is already started.
     }
   }
 
-  // async getGame() {
-  //   //Since theres only one game and it isn't started yet i.e currentSong is undefined we can find the game like this.
-  //   return await gameModel.findOne().exec();
-  // }
-
   async addPlayer(username: string, topSongs: Song[]) {
-    // const game = await this.getGame();
-    // if (game == null) {
-    //   throw new Error(`Game is null`);
-    // }
 
     const pl: Player = { name: username, topSongs: topSongs };
     if (this.allPlayers.filter((player => player.name == username)).length > 0) {
@@ -107,11 +88,12 @@ class GameService implements IGameService {
 
     // for the database
     // creates a new player p with the given username and topsongs and saves it to the db.
-    const p = await playerModel.create({
-      name: username,
-      topSongs: topSongs
-    })
-    await p.save();
+
+    // const p = await playerModel.create({
+    //   name: username,
+    //   topSongs: topSongs
+    // })
+    // await p.save();
 
     await gameModel.updateOne(
       { _id: (await this.game)._id },
@@ -123,6 +105,10 @@ class GameService implements IGameService {
     );
 
     return pl;
+  }
+
+  async dropDB(): Promise<void> {
+    await gameModel.deleteMany({ _id: { $ne: (await this.game)._id } });
   }
 
   private async setupSongs(): Promise<void> {
@@ -142,37 +128,76 @@ class GameService implements IGameService {
   }
 
   async isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }> {
-    // const game = await this.getGame();
-    // if(game == null) {
-    //   throw new Error(`Game is null`);
-    // }
     if (this.currentSong == null) {
       return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers };
     }
     return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
   }
 
-  async recoverDataFromDatabase(): Promise<undefined | {allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[]}> {
-    await gameModel.find({ _id: (await this.game)._id }, (err: any, obj: any) => {
-      this.allPlayers = obj[0].toObject().allPlayers;
-      this.currentSong = obj[0].toObject().currentSong;
-      this.gameHasStarted = obj[0].toObject().gameHasStarted;
-      this.shuffledSongs = obj[0].toObject().shuffledSongs;
-      
-      if(err) {
-        return undefined;
-      } else {
-        return {allPlayers: this.allPlayers, gameHasStarted: this.gameHasStarted, currentSong: this.currentSong, shuffledSongs: this.shuffledSongs};
-      }
+  async recoverDataFromDatabase(): Promise<undefined | { allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[] }> {
+    const [game]: any = await gameModel.find({ _id: (await this.game)._id });
+
+    console.log(this.allPlayers + `   pre allplayers \n\n`);
+    console.log(this.currentSong + `    pre currentSong \n\n`);
+    console.log(this.shuffledSongs + `     pre shuffledsongs \n\n`);
+    console.log(this.gameHasStarted + `   pre gamehasstarted \n\n`);
+
+    this.flushService();
+    if (!game) {
+      return undefined;
+    }
+    const recovered: { allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[] } = game;
+
+    //retreives the data of players
+    recovered.allPlayers.forEach(player => {
+      this.allPlayers.push(player);
     });
-    return undefined;
+
+    //retreives the data of gameHasAlreadyStarted
+    this.gameHasStarted = recovered.gameHasStarted;
+
+    //retreives the data of currentSong
+    this.currentSong = recovered.currentSong;
+
+    //retreives the data of shuffledSongs
+    recovered.shuffledSongs.forEach(song => {
+      this.shuffledSongs.push(song);
+    });
+
+    console.log(this.allPlayers + `   post allplayers \n\n`);
+    console.log(this.currentSong + `    post currentSong \n\n`);
+    console.log(this.shuffledSongs + `     post shuffledsongs \n\n`);
+    console.log(this.gameHasStarted + `   post gamehasstarted \n\n`);
+    // console.log(JSON.stringify(recovered.allPlayers.pop()) + `        pop \n \n`);
+    // if(recovered.allPlayers != null) console.log(JSON.stringify(recovered.allPlayers) + `  allPlayers is undefined \n\n`);
+    // if(recovered.gameHasStarted != null) console.log(JSON.stringify(recovered.gameHasStarted) + `  gameHasStarted is undefined \n\n`);
+    // if(recovered.currentSong != null) console.log(JSON.stringify(recovered.currentSong) + `  currentSong is undefined \n\n`);
+    // if(recovered.shuffledSongs != null) console.log(JSON.stringify(recovered.shuffledSongs) + `  shuffledSongs is undefined \n\n`);
+    return recovered;
   }
 
+  async flushService(): Promise<void> {
+    //removes all players from allplayers
+    this.allPlayers.forEach(() => {
+      this.allPlayers.pop();
+    });
+    this.shuffledSongs.forEach(() => {
+      this.shuffledSongs.pop();
+    });
+
+    this.gameHasStarted = false;
+    this.currentSong = undefined;
+
+    console.log(this.allPlayers + `   afterflush allplayers \n\n`);
+    console.log(this.currentSong + `    afterflush currentSong \n\n`);
+    console.log(this.shuffledSongs + `     afterflush shuffledsongs \n\n`);
+    console.log(this.gameHasStarted + `   afterflush gamehasstarted \n\n`);
+
+  }
+
+
+
   async nextSong(): Promise<{ currentSong: Song; players: Player[]; } | undefined> {
-    // const game = await this.getGame();
-    // if (game == null) {
-    //   throw new Error(`Game is null`);
-    // }
 
     if (this.currentSong == null) {
       return undefined;
@@ -196,11 +221,6 @@ class GameService implements IGameService {
   }
 
   async findSongs(): Promise<Song[]> {
-    // const game = await this.getGame();
-    // if(game == null) {
-    //   throw new Error(`Game is null`);
-    // }
-
     const uniqueSongs: Set<Song> = new Set(this.allPlayers.flatMap(player => player.topSongs));
     if (uniqueSongs.size == 0) {
       throw new Error(`The given players have no top songs.`);
@@ -210,16 +230,20 @@ class GameService implements IGameService {
 
   // Returns all players that have the given song as one of their topsongs. 
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-    // const game = await this.getGame();
-    // if(game == null) {
-    //   throw new Error(`Game is null`);
-    // }
 
-    const playersWithSong: Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
-    if (playersWithSong.length == 0) {
-      throw new Error(`No player have this song as one of their top songs.`);
+    const playersWithSong: Player[] = [];
+    for (const player of this.allPlayers) {
+      if (player.topSongs && player.topSongs.includes(currentSong)) { // added a check for player.topSongs
+        playersWithSong.push(player);
+      }
     }
     return playersWithSong;
+
+    // const playersWithSong: Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
+    // if (playersWithSong.length == 0) {
+    //   throw new Error(`No player have this song as one of their top songs.`);
+    // }
+    // return playersWithSong;
   }
 
   // Shuffles the given Song array.
@@ -242,3 +266,4 @@ class GameService implements IGameService {
 export function makeGameService() {
   return new GameService();
 }
+

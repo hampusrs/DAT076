@@ -50,7 +50,11 @@ gameRouter.get("/game/recover",
 async (_, res: Response<string | {allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[]}>
 ) => {
 try {
-  res.status(200).send(await gameService.recoverDataFromDatabase());
+  const response = await gameService.recoverDataFromDatabase();
+  if(response == null) {
+    res.status(400).send(`Error occured when recovering the data from database`);
+  }
+  res.status(200).send(response);
 } catch (e : any) {
   console.error(e.stack);
   res.status(400).send(e.message);

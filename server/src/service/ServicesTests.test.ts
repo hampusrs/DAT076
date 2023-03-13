@@ -27,8 +27,7 @@ const player1: Player = { name: "Bob", topSongs: [song1, song2] };
 const player2: Player = { name: "Jane", topSongs: [song2, song3] };
 // const players: Player[] = [player1, player2];
 
-test("Test that addPlayer adds a player to currentPlayers", () => {
-  
+test("Test that addPlayer adds a player to currentPlayers", () => {  
   const gameService = makeGameService();
   // adds Bob to game
   gameService.addPlayer(player1.name, [song1, song2]);
@@ -36,18 +35,6 @@ test("Test that addPlayer adds a player to currentPlayers", () => {
   const numberMatches = gameService.allPlayers.filter(player => player.name == player1.name)
   expect(numberMatches.length).toBeGreaterThanOrEqual(1); 
 });
-
-
-test("Test that startGame returns undefined when game has already started", async () => {
-  const gameService = makeGameService();
-  // start the game for the first time
-  await gameService.addPlayer(player1.name, player1.topSongs);
-  await gameService.addPlayer(player2.name, player2.topSongs);
-  expect(await gameService.startGame()).not.toBeUndefined;
-  // starts the game for a second time, should return undefined.
-  expect(await gameService.startGame()).toBeUndefined;
-});
-
 
 test("Check that startGame sets a currentSong", async () => {
   const gameService = makeGameService();
@@ -60,13 +47,25 @@ test("Check that startGame sets a currentSong", async () => {
   expect(gameService.currentSong).not.toBeUndefined;
 });
 
+test("Test that startGame returns undefined when game has already started", async () => {
+  const gameService = makeGameService();
+  // start the game for the first time
+  await gameService.addPlayer(player1.name, player1.topSongs);
+  await gameService.addPlayer(player2.name, player2.topSongs);
+  expect(await gameService.startGame()).not.toBeUndefined;
+  // starts the game for a second time, should return undefined.
+  expect(await gameService.startGame()).toBeUndefined;
+});
+
+
+
 
 test("Checks that isAlreadyStarted returns true if game is started otherwise not.", async () => {
     const gameService = makeGameService();
     gameService.addPlayer(player1.name, player1.topSongs);
     gameService.addPlayer(player2.name, player2.topSongs);
     expect((await gameService.isAlreadyStarted()).gameHasStarted).toBeFalsy;
-    gameService.startGame();
+    await gameService.startGame();
     expect((await gameService.isAlreadyStarted()).gameHasStarted).toBeTruthy;
   });
 
@@ -109,8 +108,6 @@ test("Check that nextSong doesn't give the same song again.", async () => {
     const firstSong = gameService.currentSong;
     const secondSong = gameService.nextSong();
     expect(firstSong).not.toEqual(secondSong);
-    
-
   });
 
   
@@ -119,7 +116,6 @@ test("Test that the array of current players in the game have length 2", async (
     await gameService.addPlayer(player1.name, player1.topSongs);
     await gameService.addPlayer(player2.name, player2.topSongs);
     const players = (await gameService.getPlayers());
-    console.log(players);
     expect(players.length).toEqual(2);
 });
 
