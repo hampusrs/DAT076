@@ -240,11 +240,9 @@ gameRouter.post(
         try {
             const action: string = req.body.action;
 
-            if (!gameService.gameHasStarted) {
+            if (gameService.gameHasStarted == false) {
                 res.status(400).send("The game has not started yet");
-            }
-
-            if (action == "HidePlayers") {
+            } else if (action == "HidePlayers") {
                 await gameService.hidePlayers();
                 res.status(200).send();
             } else if (action == "RevealPlayers") {

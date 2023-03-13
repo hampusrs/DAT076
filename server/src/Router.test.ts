@@ -60,6 +60,22 @@ describe("Before game has started", () => {
       expect(response.text).toBe("The game has not started yet");
     })
   });
+  describe("POST to /game/currentSong/isRevealed", () => {
+    describe("Given body with defined but invalid action'HidePlayers'", () => {
+      test("Should return 400 status code and error message", async () => {
+        const response = await request.post("/game/currentSong/isRevealed").send({action: "HidePlayers"});
+        expect(response.statusCode).toBe(400);
+        expect(response.text).toBe("The game has not started yet");
+      })
+    });
+    describe("Given body with undefined action", () => {
+      test("Should repond with 400 status code and error message", async () => {
+        const response = await request.post("/game/currentSong/isRevealed").send({action: "invalid"});
+        expect(response.statusCode).toBe(400);
+        expect(response.text).toBe("The game has not started yet");
+      })
+    })
+  });
   describe("GET to /login", () => {
     test("Should respond with 302 status code and Location header with Spotify login URL", async () => {
       const response = await request.get("/login");
@@ -153,6 +169,27 @@ describe("When game has started", () => {
       const response = await request.get("/game/currentSong/isRevealed");
       expect(response.statusCode).toBe(200);
       expect(response.body.playersAreRevealed).toBeDefined();
-    })
+    });
+  });
+  describe("POST to /game/currentSong/isRevealed", () => {
+    describe("Given body with action 'HidePlayers'", () => {
+      test("Should respond with 200 status code", async () => {
+        const response = await request.post("/game/currentSong/isRevealed").send({action: "HidePlayers"});
+        expect(response.statusCode).toBe(200);
+      });
+    });
+    describe("Given body with action 'RevealPlayers'", () => {
+      test("Should respond with 200 status code", async () => {
+        const response = await request.post("/game/currentSong/isRevealed").send({action: "RevealPlayers"});
+        expect(response.statusCode).toBe(200);
+      });
+    });
+    describe("Given body with undefined action", () => {
+      test("Shoudl resond with 400 status code and error message", async () => {
+        const response = await request.post("/game/currentSong/isRevealed").send({action: "InvalidAction"}); 
+        expect(response.statusCode).toBe(400);
+        expect(response.text).toBe(`The action 'InvalidAction' is not defined`);
+      });
+    });
   });
 });
