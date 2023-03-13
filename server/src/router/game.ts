@@ -95,15 +95,18 @@ gameRouter.post(
 );
 
 gameRouter.get("/login", (_, res) => {
-  const state = generateRandomString(16);
-  res.cookie("spotify_auth_state", state);
-
   const scope = "user-top-read user-read-email";
 
-  const queryParams = `client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${encodeURIComponent(
-    scope
-  )}`;
-  res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
+  if (CLIENT_ID == null || REDIRECT_URI == null) {
+    res
+      .status(500)
+      .send("Server error: Enviroment variables not set up correctly");
+  } else {
+    const queryParams = `client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${encodeURIComponent(
+      scope
+    )}`;
+    res.redirect(`https://accounts.spotify.com/authorize?${queryParams}`);
+  }
 });
 
 gameRouter.get("/callback", async (req, res) => {
@@ -146,7 +149,7 @@ gameRouter.get("/callback", async (req, res) => {
       if (userInfoResponse.status === 200) {
         // get user's top tracks with access token
         const topTracksResponse = await axios.get(
-          "https://api.spotify.com/v1/me/top/tracks?limit=50",
+          "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50",
           {
             headers: {
               Authorization: `${token_type} ${access_token}`,
@@ -193,26 +196,31 @@ gameRouter.get("/callback", async (req, res) => {
           res.status(200).redirect(`http://localhost:3000/?${queryParams}`);
         }
       }
-
     }
   } catch (error: AxiosError | any) {
     if (axios.isAxiosError(error)) {
       // caused by requests send to SpotifyAPI
       if (!(error.response?.status == null)) {
-        res.status(error.response?.status).redirect("http://localhost:3000");
+        res.status(error.response.status).redirect("http://localhost:3000");
       } else {
         res.status(500).redirect("http://localhost:3000");
       }
+    } else {
+      console.log(error.message);
+      res.status(500).redirect("http://localhost:3000");
     }
   }
 });
 
-const generateRandomString = (length: number) => {
-  let text = "";
-  const possible =
-    "ABDDEFGHIJKLMNOPQRSTUVXYZabcdefghiijklmnopqrstuvxyz0123456789";
-  for (let i = 0; i < length; i++) {
-    text += possible.charAt(Math.floor(Math.random() * possible.length));
+// FOR TESTING: Manually adding a player to game without having to log into Spotify
+gameRouter.post("/game/players", (req, res) => {
+  const username: string = req.body.username;
+  const topSongs: Song[] = req.body.topSongs;
+
+  const addPlayerResponse = gameService.addPlayer(username, topSongs);
+  if (addPlayerResponse == null) {
+    res.status(400).send(`Player ${username} is already in game`);
+  } else {
+    res.status(200).send(`Successfully added player ${username} to the game`);
   }
-  return text;
-};
+});
