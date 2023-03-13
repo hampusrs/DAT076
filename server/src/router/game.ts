@@ -98,7 +98,9 @@ gameRouter.get("/login", (_, res) => {
   const scope = "user-top-read user-read-email";
 
   if (CLIENT_ID == null || REDIRECT_URI == null) {
-    res.status(500).send("Server error: Enviroment variables not set up correctly");
+    res
+      .status(500)
+      .send("Server error: Enviroment variables not set up correctly");
   } else {
     const queryParams = `client_id=${CLIENT_ID}&response_type=code&redirect_uri=${REDIRECT_URI}&scope=${encodeURIComponent(
       scope
@@ -147,7 +149,7 @@ gameRouter.get("/callback", async (req, res) => {
       if (userInfoResponse.status === 200) {
         // get user's top tracks with access token
         const topTracksResponse = await axios.get(
-          "https://api.spotify.com/v1/me/top/tracks?limit=50",
+          "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50",
           {
             headers: {
               Authorization: `${token_type} ${access_token}`,
@@ -190,7 +192,7 @@ gameRouter.get("/callback", async (req, res) => {
           )}&refresh_token=${encodeURIComponent(
             refresh_token
           )}&expires_in=${encodeURIComponent(expires_in)}`;
-
+          
           res.status(200).redirect(`http://localhost:3000/?${queryParams}`);
         }
       }
@@ -199,10 +201,13 @@ gameRouter.get("/callback", async (req, res) => {
     if (axios.isAxiosError(error)) {
       // caused by requests send to SpotifyAPI
       if (!(error.response?.status == null)) {
-        res.status(error.response?.status).redirect("http://localhost:3000");
+        res.status(error.response.status).redirect("http://localhost:3000");
       } else {
         res.status(500).redirect("http://localhost:3000");
       }
+    } else {
+      console.log(error.message);
+      res.status(500).redirect("http://localhost:3000");
     }
   }
 });
