@@ -85,7 +85,6 @@ export function PlayGame() {
             setGameHasStarted(true);
         }
 
-
     }
 
     async function fetchGame() {
@@ -104,6 +103,7 @@ export function PlayGame() {
         const intervalId = setInterval(() => {
             void (async () => {
                 await fetchGame();
+                await playersAreRevealed();
             })();
         }, 1000);
 
@@ -112,7 +112,7 @@ export function PlayGame() {
 
 
     async function nextSong() {
-        hidePlayers();
+        await hidePlayers();
         setReset(false);
         const response = await axios.post<{
             currentSong: Song;
@@ -143,12 +143,27 @@ export function PlayGame() {
         return player.name
     }
 
-    function revealPlayers() {
-        setCurrentPlayersAreRevealed(true);
+    async function playersAreRevealed() {
+        const response = await axios.get<{
+            playersAreRevealed: boolean;
+        }>("http://localhost:8080/game/currentSong/isRevealed");
+        setCurrentPlayersAreRevealed(response.data.playersAreRevealed);
     }
 
-    function hidePlayers(){
-        setCurrentPlayersAreRevealed(false);
+    async function revealPlayers() {
+        const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
+        if (response.status === 200) {
+        setCurrentPlayersAreRevealed(true);
+        }
+        //await axios.post("http://localhost:8080/game/currentSong/isRevealed", {action: "RevealPlayers"});
+    }
+
+    async function hidePlayers(){
+        const response = await axios.post<{}>("http://localhost:8080/game/currentSong/isRevealed", {action: "HidePlayers"});
+        if (response.status === 200) {
+            setCurrentPlayersAreRevealed(false);
+        }
+        //await axios.post("http://localhost:8080/game/currentSong/isRevealed", {action: "HidePlayers"});
     }
 
     /*
@@ -175,13 +190,9 @@ export function PlayGame() {
             </div>
             <div className="RevealItem">
                 <label className="Question"> Who's top song is this? </label>
-                <RevealPlayersCard players={currentPlayers?.map(getPlayerName)}/>
-            </div>
-            <div className="RevealItem">
                 {currentPlayersAreRevealed ? currentPlayers?.map(getPlayerName) : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
                     Reveal players
                 </button>}
-                
             </div>
             <button
                 className="NextSongBtn GreenButton"
