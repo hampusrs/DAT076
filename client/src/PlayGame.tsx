@@ -39,7 +39,7 @@ export function PlayGame(props: {
 
     
     const [status, setStatus] = useState<boolean>(false)
-    
+   
 
     async function getSongList() : Promise<void> {
         try {
@@ -53,6 +53,7 @@ export function PlayGame(props: {
             }
           }
     } 
+
 
     /**
      * Gets all players that are currently playing the game.
@@ -98,7 +99,7 @@ export function PlayGame(props: {
             void (async () => {
                 await fetchGame();
                 await playersAreRevealed();
-                await playersAreRevealed();
+
             })();
         }, 1000);
 
@@ -111,7 +112,7 @@ export function PlayGame(props: {
      */
     async function nextSong() {
         await hidePlayers();
-        await hidePlayers();
+
         setReset(false);
         try {
             const response = await axios.post<{
