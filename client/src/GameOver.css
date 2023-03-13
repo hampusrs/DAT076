@@ -1,0 +1,13 @@
+.GameOver{
+    background-color: black;
+    height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+}
+
+.GameOverLabel {
+    color: white;
+    font-size: xx-large;
+    align-self: center;
+}
