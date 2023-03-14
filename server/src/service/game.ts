@@ -79,6 +79,7 @@ class GameService implements IGameService {
 
 
       this.gameHasStarted = true;
+
       //updates the database
       await gameModel.updateOne(
         { _id: (await this.game)._id },

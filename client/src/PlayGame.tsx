@@ -36,7 +36,6 @@ export function PlayGame(props: {
     const [reset, setReset] = useState<boolean>(false); //Vad gör denna?
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false);
     const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
-    const [gameOver, setGameOver] = useState<boolean>(false);
     /**
      * Gets all players that are currently playing the game.
      * Updates players accordingly.
@@ -61,11 +60,10 @@ export function PlayGame(props: {
             setCurrentPlayers(response.data.currentPlayers);
             setGameHasStarted(true);
         }
-
     }
 
     async function fetchGame() {
-        const response = await axios.get<{
+            const response = await axios.get<{
             gameHasStarted: boolean;
             currentPlayers: Player[];
             currentSong: Song;
@@ -85,15 +83,13 @@ export function PlayGame(props: {
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, [gameOver]);
-
+    }, []);
 
     useEffect(() => {
-        if (gameOver) {
+        if ((currentSong == null) && (gameHasStarted == true)) {
             props.goToGameOverPage();
         }
-    }, [gameOver]);
-  
+    }, [currentSong])
     /**
      * Gets the next song in the game and if there are no more songs left the player will be redirected to the
      * gameOver page.
