@@ -1,6 +1,12 @@
 import React from 'react';
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import {PreGame} from './PreGame';
+import {exec} from "child_process";
+import axios, {AxiosStatic} from 'axios';
+
+/** Create the mocked version of Axios */
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<AxiosStatic>
 
 enum Page {
     PREGAME,
@@ -18,21 +24,41 @@ function renderPreGame() {
     }}/>);
 }
 
-//TODO: Make async so that State can be used
-test('Check that pregame renders startgame button', async () => {
-    renderPreGame();
+describe('PreGame', () => {
+    //TODO: Make async so that State can be used
+    test('renders Start Game button', () => {
+        renderPreGame();
 
-    const startGameButton = screen.getByText(/Start Game/);
-    expect(startGameButton).toBeInTheDocument();
+        const startGameButton = screen.getByRole('button', {name: /Start Game/});
+        expect(startGameButton).toBeInTheDocument();
+    });
 
-    fireEvent.click(startGameButton);
 
+    test('makes a request to /game/started every second', async () => {
+        renderPreGame();
 
-    expect(page).toEqual(Page.PLAYGAME);
+        setTimeout(() => {
+            expect(mockedAxios.get).toHaveBeenCalledWith("http://localhost:8080/game/started");
+        }, 1000);
+    });
 
 });
 
-//TODO
-test('Check that the start game request is only sent once', () => {
+describe('Start Game button', () => {
+    test('calls "goToGamePage" prop when clicked', async () => {
+        renderPreGame();
 
+        const startGameButton = screen.getByRole('button', {name: /Start Game/});
+        expect(startGameButton).toBeInTheDocument();
+
+        fireEvent.click(startGameButton);
+        expect(page).toEqual(Page.PLAYGAME);
+    });
+
+
+    //TODO
+    test('makes a start game request only once', () => {
+        //expect(0).toEqual(1);
+    });
 });
+
