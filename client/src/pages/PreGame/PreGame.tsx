@@ -1,9 +1,8 @@
-import React, { useEffect, useState, useRef } from "react";
-import "./PreGame.css";
-import "./components/PlayersView";
-import PlayersView from "./components/PlayersView";
-import { Player } from "./App";
-import { Song } from "./App";
+import React, { useEffect, useState, useRef } from 'react';
+import './PreGame.css';
+import { PlayersView } from '../../components/PlayersView/PlayersView';
+import { Player } from '../App/App';
+import { Song } from '../App/App';
 import axios from "axios";
 
 
@@ -45,14 +44,14 @@ import axios from "axios";
               props.goToGamePage();
           }
       }, [gameHasStarted]);
-    
-  
+
+
     // Creates a PlayerView component for given player.
     function displayPlayer(player: Player) {
       return <PlayersView pName={player.name}> </PlayersView>;
     }
-  
-    
+
+
     return (
       <div className="CurrentPlayers">
         <div className="PlayerTable">
@@ -69,5 +68,5 @@ import axios from "axios";
       </div>
     );
   }
-  
+
   export default PreGame;

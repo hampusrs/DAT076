@@ -1,6 +1,6 @@
 import axios, { AxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Song } from './App';
+import { Song } from '../App/App';
 import './GameOver.css';
 
 export function GameOver() {
