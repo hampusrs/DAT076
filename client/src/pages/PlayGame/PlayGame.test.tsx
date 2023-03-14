@@ -2,6 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { PlayGame } from './PlayGame';
 
+
 enum Page {
     PLAYGAME,
     GAMEOVER,
@@ -18,10 +19,25 @@ function renderPlayGame() {
     }}/>);
 }
 
-test('test-template', () => {
-    renderPlayGame();
+describe('PlayGame', () => {
+    test('renders Next Song button', () => {
+        renderPlayGame();
 
-    expect(0).toEqual(0);
+        const nextSongButton = screen.getByRole('button', {name: /Next Song/});
+        expect(nextSongButton).toBeInTheDocument();
+    });
+
+    test('renders Reveal Players button', () => {
+        renderPlayGame();
+
+        const revealPlayersButton = screen.getByRole('button', {name: /Reveal players/});
+        expect(revealPlayersButton).toBeInTheDocument();
+    });
+
+    test('renders Current Players button', () => {
+        renderPlayGame();
+
+        const currentPlayersButton = screen.getByRole('button', {name: /Current players/});
+        expect(currentPlayersButton).toBeInTheDocument();
+    });
 });
-
-//TODO: How to test next song?
