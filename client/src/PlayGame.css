@@ -1,0 +1,139 @@
+.PlayGame {
+  width: 100vw;
+  height: 100vh;
+  background-color: black;
+}
+
+.SongItem {
+  display: flex;
+  flex-direction: column;
+  color: white;
+}
+
+.RevealItem {
+  width: 100%;
+  height: 150px; /* Or whatever height you want */
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-family: sans-serif;
+}
+
+.RevealItemCard {
+  height: 150px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.RevealPlayersButton {
+  background-color: rgb(238, 98, 177);
+  padding: 3vh;
+  border-radius: 50px;
+  font-size: x-large;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.RevealPlayersButton:hover {
+  background-color: rgba(238, 98, 177, 0.788);
+}
+
+.DisplaySong {
+  display: flex;
+  justify-content: center;
+  margin: 10vh;
+  align-items: center;
+  gap: 30px;
+  padding-left: 26vw;
+}
+
+.AlbumCover {
+  width: auto;
+  height: 17vw;
+}
+
+.SongInfo {
+  height: fit-content;
+  width: 50vw;
+  list-style-type: none;
+}
+
+.SongTitle {
+  font-size: 6vh;
+}
+
+.ArtistName {
+  font-size: 4vh;
+}
+
+.AlbumTitle {
+  font-size: 3vh;
+}
+
+.Question {
+  margin-left: 35vw;
+  margin-right: 35vw;
+  text-align: center;
+  font-size: 4vh;
+  margin-bottom: 5vh;
+}
+
+.NextSongBtn {
+  margin-left: 46vw;
+  margin-right: 30vw;
+  margin-top: 5vh;
+  font-size: 15px;
+  color: white;
+  padding: 2vh;
+}
+
+.GreenButton {
+  background-color: #4caf50;
+  border-color: transparent;
+  font-weight: bold;
+  border-radius: 50px;
+  width: fit-content;
+  height: fit-content;
+  cursor: pointer;
+}
+
+.GreenButton:hover {
+  background-color: #358f38;
+}
+
+.GreenButton:active {
+  background-color: #358f38;
+  transform: translateY(4px);
+}
+
+.showAllPlayersDiv {
+  display: grid;
+  position: absolute;
+  margin-left: 5vw;
+  top: 5vw;
+}
+
+.playersList {
+  font-size: 2vw;
+  display: grid;
+  position: absolute;
+  top: 12vh;
+  align-items: center;
+  color: white;
+}
+
+.playerView {
+  clear: both;
+  overflow: visible;
+}
+
+.showPlayersButton {
+  font-size: 20px;
+  color: white;
+  padding: 3vh;
+}

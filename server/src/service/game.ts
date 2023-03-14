@@ -4,13 +4,17 @@ import { gameModel } from "../../schema/game.db";
 
 interface IGameService {
   // returns all the players currently in the game.
-  getPlayers(): Promise<Player[]>;
+  getPlayers(): Promise<{ players: Player[] }>;
+
   // returns undefined is game is already started or there are no songs left.
   startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined>;
+
   // returns undefined if game is already started or there are no songs left.
   nextSong(): Promise<{ currentSong: Song, players: Player[] } | undefined>;
+
   // returns undefined if player already exist.
   addPlayer(username: string, topSongs: Song[]): Promise<Player | undefined>;
+
   // returns object without currentSong if it is undefined.
   isAlreadyStarted(): Promise<{ gameHasStarted: boolean, currentPlayers: Player[], currentSong?: Song }>;
 }
@@ -18,8 +22,9 @@ interface IGameService {
 class GameService implements IGameService {
   allPlayers: Player[] = [];
   gameHasStarted: boolean = false;
-  currentSong: Song | undefined;
+  currentSong: Song | undefined = undefined;
   shuffledSongs: Song[] = [];
+  playersAreRevealed: boolean = false;
 
   //Creates a game in the database.
   game = gameModel.create({
@@ -29,12 +34,27 @@ class GameService implements IGameService {
     shuffledSongs: []
   });
 
-  //Gets all players
-  async getPlayers(): Promise<Player[]> {
-    return this.allPlayers;
+  async revealPlayers(): Promise<{ playersAreRevealed: boolean }> {
+    this.playersAreRevealed = true;
+    return { playersAreRevealed: this.playersAreRevealed };
   }
 
+  async hidePlayers(): Promise<{ playersAreRevealed: boolean }> {
+    this.playersAreRevealed = false;
+    return { playersAreRevealed: this.playersAreRevealed };
+  }
+
+
+  //Gets all players
+  async getPlayers(): Promise<{ players: Player[] }> {
+    return { players: this.allPlayers };
+  }
+
+
   async startGame(): Promise<{ currentSong: Song, players: Player[] } | undefined> {
+    if (this.gameHasStarted == true) {
+      return undefined;
+    }
     if (this.currentSong == null) {
 
       await this.dropDB();
@@ -57,9 +77,6 @@ class GameService implements IGameService {
         }
       );
 
-      if (this.currentSong == null) {
-        return undefined;
-      }
 
       this.gameHasStarted = true;
       //updates the database
@@ -72,6 +89,9 @@ class GameService implements IGameService {
         }
       );
 
+      if (this.currentSong == null) {
+        return undefined;
+      }
       return { currentSong: this.currentSong, players: await this.findPlayersWithSong(this.currentSong) };
     } else {
       return undefined;   //returns undefined if game is already started.
@@ -124,7 +144,11 @@ class GameService implements IGameService {
     if (this.currentSong == null) {
       return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers };
     }
-    return { gameHasStarted: this.gameHasStarted, currentPlayers: this.allPlayers, currentSong: this.currentSong };
+    return {
+      gameHasStarted: this.gameHasStarted,
+      currentPlayers: await this.findPlayersWithSong(this.currentSong),
+      currentSong: this.currentSong
+    };
   }
 
   async recoverDataFromDatabase(): Promise<undefined | { allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[] }> {
@@ -188,6 +212,8 @@ class GameService implements IGameService {
     }
   }
 
+
+
   async findSongs(): Promise<Song[]> {
     const uniqueSongs: Set<Song> = new Set(this.allPlayers.flatMap(player => player.topSongs));
     if (uniqueSongs.size == 0) {
@@ -196,14 +222,14 @@ class GameService implements IGameService {
     return Array.from(uniqueSongs);
   }
 
-  // Returns all players that have the given song as one of their topsongs. 
+  // Returns all players that have the given song as one of their topsongs.
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
-
-    const playersWithSong: Player[] = [];
-    for (const player of this.allPlayers) {
-      if (player.topSongs && player.topSongs.includes(currentSong)) { // added a check for player.topSongs
-        playersWithSong.push(player);
-      }
+    //const playersWithSong: Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
+    const playersWithSong = this.allPlayers.filter((player) => {
+      return player.topSongs.some((song) => song.id === currentSong.id);
+    });
+    if (playersWithSong.length == 0) {
+      throw new Error(`No player have this song as one of their top songs.`);
     }
     return playersWithSong;
   }
