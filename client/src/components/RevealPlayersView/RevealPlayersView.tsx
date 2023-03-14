@@ -3,7 +3,7 @@ interface RevealPlayersProps {
     children?: React.ReactNode;
 }
 
-function RevealPlayersView({players}: RevealPlayersProps) {
+export function RevealPlayersView({players}: RevealPlayersProps) {
     function PlayerParser(players: string[] | undefined): string {
         if (players == null) {
             return "";

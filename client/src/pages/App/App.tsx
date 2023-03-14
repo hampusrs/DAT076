@@ -1,8 +1,8 @@
 import {useState} from 'react';
-import {PreGame} from './PreGame'
-import PlayGame from './PlayGame';
-import Login from "./Login";
-import { GameOver } from './GameOver';
+import { PreGame } from '../PreGame/PreGame';
+import { PlayGame } from '../PlayGame/PlayGame';
+import { Login } from '../Login/Login';
+import { GameOver } from '../GameOver/GameOver';
 
 export interface Song {
     title: string;

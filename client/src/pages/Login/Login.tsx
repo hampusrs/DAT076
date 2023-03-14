@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import './Login.css';
-import {accessToken} from './spotify';
+import {accessToken} from '../../services/spotify';
 
 export function Login(props: {
     goToPreGamePage: () => void
