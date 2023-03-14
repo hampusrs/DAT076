@@ -1,8 +1,6 @@
 import { Song } from "../model/Song";
 import { Player } from "../model/Player";
-// import { playerModel } from "../../db/player.db";
-import { gameModel } from "../../db/game.db";
-// import { songModel } from "../../db/song.db";
+import { gameModel } from "../../schema/game.db";
 
 interface IGameService {
   // returns all the players currently in the game.
@@ -40,12 +38,14 @@ class GameService implements IGameService {
     if (this.currentSong == null) {
 
       await this.dropDB();
-      await this.setupSongs(); //updates this.shuffledSongs
-      this.currentSong = this.shuffledSongs.pop();    //this.shuffledSongs.at(this.shuffledSongs.length - 1);
+      //updates this.shuffledSongs
+      await this.setupSongs();
+      this.currentSong = this.shuffledSongs.pop();
 
       if (this.game == null) {
         throw new Error(`Game is null`);
       }
+      //updates the database
       await gameModel.updateOne(
         { _id: (await this.game)._id },
         {
@@ -62,6 +62,7 @@ class GameService implements IGameService {
       }
 
       this.gameHasStarted = true;
+      //updates the database
       await gameModel.updateOne(
         { _id: (await this.game)._id },
         {
@@ -86,15 +87,7 @@ class GameService implements IGameService {
 
     this.allPlayers.push(pl);
 
-    // for the database
-    // creates a new player p with the given username and topsongs and saves it to the db.
-
-    // const p = await playerModel.create({
-    //   name: username,
-    //   topSongs: topSongs
-    // })
-    // await p.save();
-
+    //Adds player to the database
     await gameModel.updateOne(
       { _id: (await this.game)._id },
       {
@@ -137,42 +130,23 @@ class GameService implements IGameService {
   async recoverDataFromDatabase(): Promise<undefined | { allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[] }> {
     const [game]: any = await gameModel.find({ _id: (await this.game)._id });
 
-    console.log(this.allPlayers + `   pre allplayers \n\n`);
-    console.log(this.currentSong + `    pre currentSong \n\n`);
-    console.log(this.shuffledSongs + `     pre shuffledsongs \n\n`);
-    console.log(this.gameHasStarted + `   pre gamehasstarted \n\n`);
-
     this.flushService();
     if (!game) {
       return undefined;
     }
     const recovered: { allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[] } = game;
-
     //retreives the data of players
     recovered.allPlayers.forEach(player => {
       this.allPlayers.push(player);
     });
-
     //retreives the data of gameHasAlreadyStarted
     this.gameHasStarted = recovered.gameHasStarted;
-
     //retreives the data of currentSong
     this.currentSong = recovered.currentSong;
-
     //retreives the data of shuffledSongs
     recovered.shuffledSongs.forEach(song => {
       this.shuffledSongs.push(song);
     });
-
-    console.log(this.allPlayers + `   post allplayers \n\n`);
-    console.log(this.currentSong + `    post currentSong \n\n`);
-    console.log(this.shuffledSongs + `     post shuffledsongs \n\n`);
-    console.log(this.gameHasStarted + `   post gamehasstarted \n\n`);
-    // console.log(JSON.stringify(recovered.allPlayers.pop()) + `        pop \n \n`);
-    // if(recovered.allPlayers != null) console.log(JSON.stringify(recovered.allPlayers) + `  allPlayers is undefined \n\n`);
-    // if(recovered.gameHasStarted != null) console.log(JSON.stringify(recovered.gameHasStarted) + `  gameHasStarted is undefined \n\n`);
-    // if(recovered.currentSong != null) console.log(JSON.stringify(recovered.currentSong) + `  currentSong is undefined \n\n`);
-    // if(recovered.shuffledSongs != null) console.log(JSON.stringify(recovered.shuffledSongs) + `  shuffledSongs is undefined \n\n`);
     return recovered;
   }
 
@@ -181,18 +155,12 @@ class GameService implements IGameService {
     this.allPlayers.forEach(() => {
       this.allPlayers.pop();
     });
+    //removes all songs from shuffledsongs
     this.shuffledSongs.forEach(() => {
       this.shuffledSongs.pop();
     });
-
     this.gameHasStarted = false;
     this.currentSong = undefined;
-
-    console.log(this.allPlayers + `   afterflush allplayers \n\n`);
-    console.log(this.currentSong + `    afterflush currentSong \n\n`);
-    console.log(this.shuffledSongs + `     afterflush shuffledsongs \n\n`);
-    console.log(this.gameHasStarted + `   afterflush gamehasstarted \n\n`);
-
   }
 
 
@@ -238,12 +206,6 @@ class GameService implements IGameService {
       }
     }
     return playersWithSong;
-
-    // const playersWithSong: Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
-    // if (playersWithSong.length == 0) {
-    //   throw new Error(`No player have this song as one of their top songs.`);
-    // }
-    // return playersWithSong;
   }
 
   // Shuffles the given Song array.

@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "nodemon --exec node --experimental-specifier-resolution=node --loader ts-node/esm src/index.ts",
-    "test": "jest"
+    "test": "jest",
+    "testdb": "mocha --recursive --exit"
   },
   "author": "",
   "license": "ISC",
@@ -16,6 +17,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "mocha": "^10.2.0",
     "mongoose": "^7.0.1",
     "nodemon": "^2.0.20",
     "query-string": "^8.1.0",
@@ -33,5 +35,6 @@
     "ts-jest": "^29.0.5",
     "ts-node-dev": "^2.0.0",
     "typescript": "^4.9.4"
-  }
+  },
+  "typescript": "^4.9.4"
 }
