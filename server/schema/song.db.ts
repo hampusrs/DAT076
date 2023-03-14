@@ -1,4 +1,4 @@
-import {Schema, Model} from "mongoose";
+import {Schema} from "mongoose";
 import { Song } from "../src/model/Song";
 import { conn } from "./conn";
 
@@ -18,6 +18,10 @@ const songSchema : Schema = new Schema({
     },
     artist: {
         type : String,
+        required : true,
+    },
+    albumCoverURI: {
+        type: String,
         required : true,
     }
 })
