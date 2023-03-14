@@ -27,6 +27,7 @@
     height: fit-content;
     padding: 4vh;
     font-family: sans-serif;
+    cursor: pointer;
 }
 
 .StartGameBtn:hover {background-color: #4caf4fd1}

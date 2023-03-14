@@ -190,7 +190,7 @@ export function PlayGame(props: {
                 <div className="RevealItemCard">
                     {currentPlayersAreRevealed ?
                         <RevealPlayersView players={currentPlayers?.map(getPlayerName)}/>
-                        : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
+                        : <button className='RevealPlayersButton' onClick={revealPlayers}>
                             Reveal players
                         </button>}
                 </div>
@@ -207,7 +207,7 @@ export function PlayGame(props: {
                     className="showPlayersButton GreenButton"
                     onClick={showPlayerButtonAction}
                 >
-                    Show all players
+                    Current players
                 </button>
                 <div className="playersList">
                     {/* If open is true then display all players otherwise display nothing. */}
