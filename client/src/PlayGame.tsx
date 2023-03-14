@@ -19,7 +19,7 @@ interface Player {
 }
 
 export function PlayGame(props: {
-    goToGameOverPage : () => void
+    goToGameOverPage: () => void
 }) {
     // currentSong is undefined if game has not yet started, otherwise current song
     const [currentSong, setCurrentSong] = useState<Song | undefined>(undefined);
@@ -37,22 +37,22 @@ export function PlayGame(props: {
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false);
     const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
 
-    
-    const [status, setStatus] = useState<boolean>(false)
-   
 
-    async function getSongList() : Promise<void> {
+    const [status, setStatus] = useState<boolean>(false)
+
+
+    async function getSongList(): Promise<void> {
         try {
             await axios.post("http://localhost:8080/game", {action: 'NextSong'});
             setStatus(true);
-          } catch (error : any) {
+        } catch (error: any) {
             if (error.response.status === 400) {
-              console.log("test");
-              props.goToGameOverPage();
-              setStatus(false)
+                console.log("test");
+                props.goToGameOverPage();
+                setStatus(false)
             }
-          }
-    } 
+        }
+    }
 
 
     /**
@@ -107,8 +107,8 @@ export function PlayGame(props: {
     }, []);
 
     /**
-     * Gets the next song in the game and if there are no more songs left the player will be redirected to the 
-     * gameOver page. 
+     * Gets the next song in the game and if there are no more songs left the player will be redirected to the
+     * gameOver page.
      */
     async function nextSong() {
         await hidePlayers();
@@ -187,11 +187,13 @@ export function PlayGame(props: {
             </div>
             <div className="RevealItem">
                 <label className="Question"> Who's top song is this? </label>
-                {currentPlayersAreRevealed ?
-                    <RevealPlayersView players={currentPlayers?.map(getPlayerName)}/>
-                    : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
-                        Reveal players
-                    </button>}
+                <div className="RevealItemCard">
+                    {currentPlayersAreRevealed ?
+                        <RevealPlayersView players={currentPlayers?.map(getPlayerName)}/>
+                        : <button className='RevealPlayersButton GreenButton' onClick={revealPlayers}>
+                            Reveal players
+                        </button>}
+                </div>
             </div>
             <div className="next-song-div">
                 <button
