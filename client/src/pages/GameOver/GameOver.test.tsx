@@ -1,10 +1,12 @@
 import React from 'react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { GameOver } from './GameOver';
 
-test('Check that app renders Game Over text', () => {
-    render(<GameOver/>);
+describe('GameOver', () => {
+    test('renders Game Over text', () => {
+        render(<GameOver/>);
 
-    const gameoverText = screen.getByText(/GAME IS OVER/);
-    expect(gameoverText).toBeInTheDocument();
+        const gameoverText = screen.getByText(/GAME IS OVER/);
+        expect(gameoverText).toBeInTheDocument();
+    });
 });

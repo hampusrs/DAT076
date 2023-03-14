@@ -10,15 +10,13 @@ import axios, {AxiosStatic} from 'axios';
 jest.mock('axios');
 const mockedAxios = axios as jest.Mocked<AxiosStatic>
 
-test('Check that app renders login button', () => {
-    render(<App/>);
+describe('App', () => {
+    test('renders login page as default', () => {
+        render(<App/>);
 
-    const loginButton = screen.getByText(/Log in/);
-    expect(loginButton).toBeInTheDocument();
+        const loginButton = screen.getByText(/Log in/);
+        expect(loginButton).toBeInTheDocument();
 
-    //TODO: Check that when the button is clicked, the user is redirected to http://localhost:8080/login
-    //fireEvent.click(loginButton);
+    });
 
-    //expect(window.location.href).toEqual('http://localhost:8080/login');
-    //expect(mockedAxios.get).toHaveBeenCalledWith("http://localhost:8080/login");
 });
