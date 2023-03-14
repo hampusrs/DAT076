@@ -152,7 +152,7 @@ class GameService implements IGameService {
   }
 
   async recoverDataFromDatabase(): Promise<undefined | { allPlayers: Player[], gameHasStarted: boolean, currentSong: Song, shuffledSongs: Song[] }> {
-    const [game]: any = await gameModel.find({ _id: (await this.game)._id });
+    const [game]: any = await gameModel.find({ _id: { $ne: (await this.game)._id } });
 
     this.flushService();
     if (!game) {
@@ -171,6 +171,19 @@ class GameService implements IGameService {
     recovered.shuffledSongs.forEach(song => {
       this.shuffledSongs.push(song);
     });
+    
+    //updates the database of the new game.
+    await gameModel.updateOne(
+      { _id: (await this.game)._id },
+      {
+        $set: {
+          allPlayers: this.allPlayers,
+          currentSong: this.currentSong,
+          shuffledSongs: this.shuffledSongs,
+          gameHasStarted: this.gameHasStarted
+        }
+      }
+    );
     return recovered;
   }
 
@@ -226,6 +239,9 @@ class GameService implements IGameService {
   async findPlayersWithSong(currentSong: Song): Promise<Player[]> {
     //const playersWithSong: Player[] = this.allPlayers.filter(player => player.topSongs.includes(currentSong));
     const playersWithSong = this.allPlayers.filter((player) => {
+      if (player.topSongs == null) {
+        throw new Error(`Player has no topSongs`);
+      }
       return player.topSongs.some((song) => song.id === currentSong.id);
     });
     if (playersWithSong.length == 0) {

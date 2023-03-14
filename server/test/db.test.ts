@@ -1,6 +1,6 @@
 import { gameModel } from "../schema/game.db"
 
-beforeEach(async () => gameModel.collection.drop());
+beforeEach(async () => await gameModel.collection.drop());
 
 describe("Adding a game to database", () => {
     it("should make the database have length 1", async () => {
