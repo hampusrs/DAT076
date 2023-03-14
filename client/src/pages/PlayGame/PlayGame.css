@@ -37,6 +37,7 @@
   color: white;
   font-weight: bold;
   cursor: pointer;
+  border-color: transparent;
 }
 
 .RevealPlayersButton:hover {
