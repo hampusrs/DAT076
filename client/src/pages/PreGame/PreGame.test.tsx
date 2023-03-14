@@ -31,3 +31,8 @@ test('Check that pregame renders startgame button', async () => {
     expect(page).toEqual(Page.PLAYGAME);
 
 });
+
+//TODO
+test('Check that the start game request is only sent once', () => {
+
+});

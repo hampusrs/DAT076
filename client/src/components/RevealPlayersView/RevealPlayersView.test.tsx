@@ -2,12 +2,6 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { RevealPlayersView } from './RevealPlayersView';
 
-test('test-template', () => {
-    render(<RevealPlayersView players={['Namn Namnsson', 'Name Smith', 'Loreen']}/>);
-
-    expect(0).toEqual(0);
-});
-
 describe('RevealPlayersView', () => {
     /*
     test('renders no players when players prop is undefined', () => {
