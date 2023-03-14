@@ -1,6 +1,6 @@
 import { gameModel } from "../schema/game.db"
 
-beforeEach(async () => gameModel.collection.drop());
+beforeEach(async () => await gameModel.collection.drop());
 
 describe("Adding a game to database", () => {
     it("should make the database have length 1", async () => {
@@ -15,7 +15,7 @@ describe("Adding a game to database", () => {
     });
 });
 
-describe("Can find a song by its id", () => {
+describe("Trying to find a game by its id", () => {
     it("should return a game", async () => {
         const game = await gameModel.create({
             allPlayers: [{ name: "Bob", topSongs: [] }],
@@ -28,75 +28,82 @@ describe("Can find a song by its id", () => {
     });
 });
 
-it("Should update the properties of a game", async () => {
-    const game = await gameModel.create({
-        allPlayers: [{ name: "Bob", topSongs: [] }],
-        gameHasStarted: false,
-        currentSong: undefined,
-        shuffledSongs: []
+describe("Trying to update a games properties", () => {
+    it("the properties should be updated", async () => {
+        const game = await gameModel.create({
+            allPlayers: [{ name: "Bob", topSongs: [] }],
+            gameHasStarted: false,
+            currentSong: undefined,
+            shuffledSongs: []
+        });
+        const newProps = {
+            gameHasStarted: true,
+            currentSong: "Song 1",
+        };
+        await gameModel.findByIdAndUpdate(game._id, newProps);
+        const updatedGame = await gameModel.findById(game._id);
+        if (updatedGame == null) {
+            throw new Error(`updatedGame is null`);
+        }
+        expect(updatedGame.gameHasStarted).toBe(true);
+        expect(updatedGame.currentSong[0][0]).toEqual("Song 1");
     });
-    const newProps = {
-        gameHasStarted: true,
-        currentSong: "Song 1",
-    };
-    await gameModel.findByIdAndUpdate(game._id, newProps);
-    const updatedGame = await gameModel.findById(game._id);
-    if (updatedGame == null) {
-        throw new Error(`updatedGame is null`);
-    }
-    expect(updatedGame.gameHasStarted).toBe(true);
-    expect(updatedGame.currentSong[0][0]).toEqual("Song 1");
+})
+
+describe("Deleting a game by its id", () => {
+    it("should delete the game", async () => {
+        const game = await gameModel.create({
+            allPlayers: [{ name: "Bob", topSongs: [] }],
+            gameHasStarted: false,
+            currentSong: undefined,
+            shuffledSongs: []
+        });
+        await gameModel.findByIdAndDelete(game._id);
+        const deletedGame = await gameModel.findById(game._id);
+        expect(deletedGame).toBeNull();
+    });
 });
 
-it("should delete a game", async () => {
-    const game = await gameModel.create({
-        allPlayers: [{ name: "Bob", topSongs: [] }],
-        gameHasStarted: false,
-        currentSong: undefined,
-        shuffledSongs: []
+describe("Creating two games and try to find all games", () => {
+    it("should retrieve all games", async () => {
+        await gameModel.create({
+            allPlayers: [{ name: "Bob", topSongs: [] }],
+            gameHasStarted: false,
+            currentSong: undefined,
+            shuffledSongs: []
+        });
+        await gameModel.create({
+            allPlayers: [{ name: "Alice", topSongs: [] }],
+            gameHasStarted: true,
+            currentSong: "Song 1",
+            shuffledSongs: ["Song 2", "Song 3"]
+        });
+        const games = await gameModel.find();
+        expect(games.length).toBe(2);
     });
-    await gameModel.findByIdAndDelete(game._id);
-    const deletedGame = await gameModel.findById(game._id);
-    expect(deletedGame).toBeNull();
 });
 
-it("should retrieve all games", async () => {
-    await gameModel.create({
-      allPlayers: [{name: "Bob", topSongs: []}],
-      gameHasStarted: false,
-      currentSong: undefined,
-      shuffledSongs: []
+describe("Finding games with a specific property value", () => {
+    it("should retrieve that game", async () => {
+        await gameModel.create({
+            allPlayers: [{ name: "Bob", topSongs: [] }],
+            gameHasStarted: false,
+            currentSong: undefined,
+            shuffledSongs: []
+        });
+        await gameModel.create({
+            allPlayers: [{ name: "Alice", topSongs: [] }],
+            gameHasStarted: true,
+            currentSong: "Song 1",
+            shuffledSongs: ["Song 2", "Song 3"]
+        });
+        const startedGames = await gameModel.find({ gameHasStarted: true });
+        expect(startedGames.length).toBe(1);
+        if (startedGames[0] == null) {
+            throw new Error(`startedGames is null`);
+        }
+        expect(startedGames[0].currentSong[0][0]).toEqual("Song 1");
     });
-    await gameModel.create({
-      allPlayers: [{name: "Alice", topSongs: []}],
-      gameHasStarted: true,
-      currentSong: "Song 1",
-      shuffledSongs: ["Song 2", "Song 3"]
-    });
-    const games = await gameModel.find();
-    expect(games.length).toBe(2);
-  });
+});
 
-  it("should retrieve games with a specific property value", async () => {
-    await gameModel.create({
-      allPlayers: [{name: "Bob", topSongs: []}],
-      gameHasStarted: false,
-      currentSong: undefined,
-      shuffledSongs: []
-    });
-    await gameModel.create({
-      allPlayers: [{name: "Alice", topSongs: []}],
-      gameHasStarted: true,
-      currentSong: "Song 1",
-      shuffledSongs: ["Song 2", "Song 3"]
-    });
-    const startedGames = await gameModel.find({ gameHasStarted: true });
-    expect(startedGames.length).toBe(1);
-    if (startedGames[0] == null) {
-        throw new Error(`startedGames is null`);
-    }
-    expect(startedGames[0].currentSong[0][0]).toEqual("Song 1");
-  });
-
-  
 
