@@ -45,7 +45,5 @@ describe('SongItem', () => {
         const songAlbumElement = screen.getByText(mySong.album);
         expect(songAlbumElement).toBeInTheDocument();
     });
-
-    //TODO: Test that album cover is loaded
-
+    
 });
