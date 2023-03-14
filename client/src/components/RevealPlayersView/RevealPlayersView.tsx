@@ -1,4 +1,5 @@
 interface RevealPlayersProps {
+    //TODO: Remove undefined
     players: string[] | undefined;
     children?: React.ReactNode;
 }
