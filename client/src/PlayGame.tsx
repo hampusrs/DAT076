@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import './PlayGame.css';
-import { SongItem } from '../../components/SongItem/SongItem';
-import { PlayersView } from '../../components/PlayersView/PlayersView';
-import { RevealPlayersView } from '../../components/RevealPlayersView/RevealPlayersView';
+import {SongItem} from './components/SongItem/SongItem';
+import {PlayersView} from "./components/PlayersView/PlayersView"
+import RevealPlayersView from "./components/RevealPlayersView/RevealPlayersView"
 import axios from 'axios';
 
 
