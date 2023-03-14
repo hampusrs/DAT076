@@ -21,8 +21,8 @@ export function Login(props: {
 
     return (
         <div className="Login">
-                <div className='Label'>Click right to log in</div>
-                <button className="login-button" onClick={loginWithSpotify}>Log in</button>
+                <div className='Label'>Welcome!</div>
+                <button className="login-button" onClick={loginWithSpotify}>Log in w/ Spotify</button>
         </div>
     );
 }
