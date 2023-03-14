@@ -55,10 +55,4 @@ describe('Start Game button', () => {
         expect(page).toEqual(Page.PLAYGAME);
     });
 
-
-    //TODO
-    test('makes a start game request only once', () => {
-        //expect(0).toEqual(1);
-    });
 });
-
