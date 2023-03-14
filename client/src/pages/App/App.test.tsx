@@ -2,7 +2,7 @@ import React from 'react';
 import {useState} from 'react';
 import {fireEvent, render, screen, waitFor} from '@testing-library/react';
 import App from './App';
-import PreGame from "./PreGame";
+import PreGame from "../PreGame/PreGame";
 //import {SongItem} from './components/SongItem';
 import axios, {AxiosStatic} from 'axios';
 
