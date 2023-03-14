@@ -119,7 +119,7 @@ test("Test that the array of current players in the game have length 2", async (
     await gameService.addPlayer(player1.name, player1.topSongs);
     await gameService.addPlayer(player2.name, player2.topSongs);
     const players = (await gameService.getPlayers());
-    expect(players.length).toEqual(2);
+    expect(players.players.length).toEqual(2);
 });
 
 
