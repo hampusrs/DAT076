@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef} from 'react';
 import './PlayGame.css';
 import { SongItem } from '../../components/SongItem/SongItem';
 import { PlayersView } from '../../components/PlayersView/PlayersView';
@@ -36,7 +36,7 @@ export function PlayGame(props: {
     const [reset, setReset] = useState<boolean>(false); //Vad gör denna?
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false);
     const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
-
+    const startedGame = useRef<boolean>(false); 
 
     const [status, setStatus] = useState<boolean>(false)
 
@@ -70,16 +70,17 @@ export function PlayGame(props: {
     }, [])
 
     async function startGame() {
-        if (!gameHasStarted) {
+        if (!startedGame.current) {
             const response = await axios.post<{
                 currentSong: Song,
                 currentPlayers: Player[]
             }>("http://localhost:8080/game", {action: 'StartGame'});
+            console.log(response.status);
             setCurrentSong(response.data.currentSong);
             setCurrentPlayers(response.data.currentPlayers);
             setGameHasStarted(true);
+            startedGame.current = true;
         }
-
     }
 
     async function fetchGame() {
@@ -105,6 +106,12 @@ export function PlayGame(props: {
 
         return () => clearInterval(intervalId);
     }, []);
+
+    useEffect(() => {
+        if ((currentSong == null) && (gameHasStarted == true)) {
+            props.goToGameOverPage();
+        }
+    }, [currentSong])
 
     /**
      * Gets the next song in the game and if there are no more songs left the player will be redirected to the
