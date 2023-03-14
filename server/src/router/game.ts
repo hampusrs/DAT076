@@ -167,7 +167,7 @@ gameRouter.get("/callback", async (req, res) => {
             if (userInfoResponse.status === 200) {
                 // get user's top tracks with access token
                 const topTracksResponse = await axios.get(
-                    "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=50",
+                    "https://api.spotify.com/v1/me/top/tracks?time_range=short_term&limit=5",
                     {
                         headers: {
                             Authorization: `${token_type} ${access_token}`,

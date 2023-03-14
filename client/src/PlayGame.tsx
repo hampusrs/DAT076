@@ -36,25 +36,7 @@ export function PlayGame(props: {
     const [reset, setReset] = useState<boolean>(false); //Vad gör denna?
     const [gameHasStarted, setGameHasStarted] = useState<boolean>(false);
     const [currentPlayersAreRevealed, setCurrentPlayersAreRevealed] = useState<boolean>(false);
-
-
-    const [status, setStatus] = useState<boolean>(false)
-
-
-    async function getSongList(): Promise<void> {
-        try {
-            await axios.post("http://localhost:8080/game", {action: 'NextSong'});
-            setStatus(true);
-        } catch (error: any) {
-            if (error.response.status === 400) {
-                console.log("test");
-                props.goToGameOverPage();
-                setStatus(false)
-            }
-        }
-    }
-
-
+    const [gameOver, setGameOver] = useState<boolean>(false);
     /**
      * Gets all players that are currently playing the game.
      * Updates players accordingly.
@@ -99,20 +81,25 @@ export function PlayGame(props: {
             void (async () => {
                 await fetchGame();
                 await playersAreRevealed();
-
             })();
         }, 1000);
 
         return () => clearInterval(intervalId);
-    }, []);
+    }, [gameOver]);
 
+
+    useEffect(() => {
+        if (gameOver) {
+            props.goToGameOverPage();
+        }
+    }, [gameOver]);
+  
     /**
      * Gets the next song in the game and if there are no more songs left the player will be redirected to the
      * gameOver page.
      */
     async function nextSong() {
         await hidePlayers();
-
         setReset(false);
         try {
             const response = await axios.post<{
