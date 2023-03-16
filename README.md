@@ -15,6 +15,31 @@ Hampus Rhedin Stam [(hampusrs)](https://github.com/hampusrs)
 
 Elin Hagman [(elinhagman)](https://github.com/elinhagman)
 
+# File architecture
+In the /client directory you can find everything related to the frontend, meanwhile the /server directory contains everything related to the backend.
+
+## Client
+In /client there is two directories, /public contains everything that should be public e.g. icons, images, logos etc. /src contains the source code.
+
+/client/src/ is made up by three directories, /components, /pages and /services.
+
+/components contains all of the react components that is used. These are sorted inte individual directores to include tests for all components.
+
+/pages contains all of the react-pages that is used. These are sorted inte individual directores to include tests and styling for all pages.
+
+/services contains all frontend-services that is used. There is one service for the moment, Spotify.tsx which checks the local storage in the browser to see if the user is logged in with a accurate spotify acces token.
+
+## Server
+In /server there is four directories, /dist is for the distributed version. /schema contains the database-related files. /src contains the source code. /test is for testing of the databse.
+
+/server/src/ is made up by three directories, /model, /router and /service.
+
+/model contains all objects e.g. Player and Song.
+
+/router contains everything API-related, all requests are handled here.
+
+/service contains all logic. All functions that change or manipluate the state of the game is here. 
+
 # Set up and installation
 Clone the repo and run `npm install` in the /server and /client folders.
 
